@@ -1,0 +1,7 @@
+{
+  "name": "mexcf-supplying",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
