@@ -1,2 +1,33 @@
-// For information on how to create your own theme, please refer to:
-// https://ionicframework.com/docs/theming/
+:root {
+  /* Fondo general oscuro */
+  --ion-background-color: #121212;
+  --ion-text-color: #ffffff;
+
+  /* Paleta MEXCF */
+  --color-naranja: #FF8C00;
+  --color-calabaza: #FF7518;
+  --color-melon: #FFB07C;
+  --color-coral: #FF7F50;
+
+  /* Colores de Estatus */
+  --status-verde: #28a745;
+  --status-ambar: #ffc107;
+  --status-rojo: #dc3545;
+}
+
+/* Clases para el Splash Screen de inicio */
+.splash-screen {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url('/assets/Banner.png') center/cover no-repeat;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 1s ease-in-out;
+}
+
+.splash-screen.oculto {
+  opacity: 0;
+  pointer-events: none;
+}
