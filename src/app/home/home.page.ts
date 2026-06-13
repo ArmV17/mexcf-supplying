@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
 
 interface Alimento {
   categoria: string;
@@ -16,6 +19,8 @@ interface Alimento {
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
+  standalone: true,
+  imports: [IonicModule, CommonModule, FormsModule]
 })
 export class HomePage implements OnInit {
   mostrarSplash = true;
@@ -63,16 +68,13 @@ export class HomePage implements OnInit {
   ];
 
   ngOnInit() {
-    // 1. Controlar el tiempo del Splash Screen (3 segundos)
     setTimeout(() => {
       this.mostrarSplash = false;
     }, 3000);
 
-    // 2. Calcular colores iniciales al abrir la app
     this.inventario.forEach(item => this.actualizarEstatus(item));
   }
 
-  // Lógica del Semáforo
   actualizarEstatus(item: Alimento) {
     if (item.actual <= 0) {
       item.textoEstatus = 'AGOTADO';
@@ -86,24 +88,19 @@ export class HomePage implements OnInit {
     }
   }
 
-  // Lógica para restar el consumo de la celda correspondiente
   restarConsumo(item: Alimento) {
     if (item.consumoTurno && item.consumoTurno > 0) {
-      // Realiza la resta
       item.actual = Number((item.actual - item.consumoTurno).toFixed(2));
       
-      // Evita números negativos si se resta de más
       if (item.actual < 0) {
         item.actual = 0;
       }
       
-      // Limpia el input y recalcula el semáforo instantáneamente
       item.consumoTurno = null;
       this.actualizarEstatus(item);
     }
   }
 
-  // Acción final del turno
   guardarCierreDeTurno() {
     if (!this.registro.turno || !this.registro.encargado) {
       alert('Por favor, completa el Turno y el Encargado antes de cerrar.');
@@ -121,7 +118,6 @@ export class HomePage implements OnInit {
     console.log('Datos listos para enviar a Firebase:', reporteFinal);
     alert(`Turno cerrado exitosamente.\nTrabajadores atendidos: ${this.registro.trabajadores || 0}`);
     
-    // Opcional: Limpiar los inputs para el siguiente turno
     this.registro.trabajadores = null;
   }
 }
