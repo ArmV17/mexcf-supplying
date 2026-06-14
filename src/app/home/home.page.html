@@ -1,5 +1,10 @@
 <div class="splash-screen" [class.oculto]="!mostrarSplash">
-  <img src="assets/icon/Banner.png" alt="Logo MEXCF" width="300">
+  <div class="splash-background"></div>
+  
+  <div class="logo-wrapper">
+    <div class="glow-ring"></div>
+    <img src="assets/icon/Banner.png" alt="Logo MEXCF" class="logo-creativo">
+  </div>
 </div>
 
 <ion-header class="ion-no-border">
@@ -10,6 +15,23 @@
     </div>
   </ion-toolbar>
 </ion-header>
+
+<ion-card style="background: #1e1e1e; border: 1px dashed var(--color-melon);">
+  <ion-card-content style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+    <p style="color: white; margin: 0;">Gestión de Inventario (Excel):</p>
+    
+    <div style="display: flex; gap: 10px;">
+      <input type="file" #fileInput accept=".xlsx, .xls, .csv" (change)="importarExcel($event)" style="display: none;" />
+      <ion-button (click)="fileInput.click()" style="--background: var(--color-calabaza);">
+        Importar
+      </ion-button>
+
+      <ion-button (click)="exportarExcel()" fill="outline" style="--color: var(--color-melon); border-color: var(--color-melon);">
+        Exportar
+      </ion-button>
+    </div>
+  </ion-card-content>
+</ion-card>
 
 <ion-content class="ion-padding">
   

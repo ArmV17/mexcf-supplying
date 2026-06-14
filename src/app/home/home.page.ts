@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
+import { Firestore, collection, doc, setDoc, collectionData } from '@angular/fire/firestore';
+import * as XLSX from 'xlsx';
 
 interface Alimento {
+  id?: string;
   categoria: string;
   alimento: string;
   maxima: number;
@@ -24,55 +27,116 @@ interface Alimento {
 })
 export class HomePage implements OnInit {
   mostrarSplash = true;
-
-  registro = {
-    turno: '',
-    encargado: '',
-    fecha: new Date().toISOString().split('T')[0], // Fecha actual por defecto
-    trabajadores: null
-  };
-
-  inventario: Alimento[] = [
-    // VERDURAS
-    { categoria: 'VERDURAS', alimento: 'Zanahoria', maxima: 24, minima: 10, actual: 24, porcion: 'Pendiente' },
-    { categoria: 'VERDURAS', alimento: 'Elote', maxima: 30, minima: 10, actual: 30, porcion: 'Pendiente' },
-    { categoria: 'VERDURAS', alimento: 'Papa', maxima: 40, minima: 16, actual: 40, porcion: 'Pendiente' },
-    { categoria: 'VERDURAS', alimento: 'Cebolla', maxima: 20, minima: 4, actual: 20, porcion: 'Pendiente' },
-    { categoria: 'VERDURAS', alimento: 'Jitomate', maxima: 24, minima: 6, actual: 24, porcion: 'Pendiente' },
-    
-    // CEREAL
-    { categoria: 'CEREAL', alimento: 'Arroz', maxima: 36, minima: 16, actual: 36, porcion: 'Pendiente' },
-    { categoria: 'CEREAL', alimento: 'Fideo', maxima: 30, minima: 16, actual: 30, porcion: 'Pendiente' },
-    { categoria: 'CEREAL', alimento: 'Tortillas de maíz', maxima: 30, minima: 12, actual: 30, porcion: 'Pendiente' },
-    
-    // LEGUMINOSAS
-    { categoria: 'LEGUMINOSAS', alimento: 'Frijoles', maxima: 46, minima: 40, actual: 46, porcion: 'Pendiente' },
-    { categoria: 'LEGUMINOSAS', alimento: 'Lentejas', maxima: 46, minima: 40, actual: 46, porcion: 'Pendiente' },
-    
-    // CARNES, HUEVO Y PESCADO
-    { categoria: 'CARNES', alimento: 'Huevo', maxima: 34.5, minima: 18.4, actual: 34.5, porcion: 'Pendiente' },
-    { categoria: 'CARNES', alimento: 'Pollo', maxima: 57.5, minima: 50, actual: 57.5, porcion: 'Pendiente' },
-    { categoria: 'CARNES', alimento: 'Res', maxima: 57.5, minima: 50, actual: 57.5, porcion: 'Pendiente' },
-    
-    // LACTEOS
-    { categoria: 'LÁCTEOS', alimento: 'Leche', maxima: 28.75, minima: 25, actual: 28.75, porcion: 'Pendiente' },
-    { categoria: 'LÁCTEOS', alimento: 'Queso', maxima: 3.45, minima: 3, actual: 3.45, porcion: 'Pendiente' },
-
-    // FRUTAS
-    { categoria: 'FRUTAS', alimento: 'Manzana', maxima: 80, minima: 32, actual: 80, porcion: 'Pendiente' },
-    { categoria: 'FRUTAS', alimento: 'Sandía', maxima: 120, minima: 40, actual: 120, porcion: 'Pendiente' },
-
-    // OTROS
-    { categoria: 'OTROS', alimento: 'Agua', maxima: 57.5, minima: 50, actual: 57.5, porcion: 'Pendiente' },
-    { categoria: 'OTROS', alimento: 'Aceite', maxima: 1.15, minima: 1, actual: 1.15, porcion: 'Pendiente' }
-  ];
+  firestore: Firestore = inject(Firestore);
+  
+  // INYECTAMOS EL DETECTOR DE CAMBIOS PARA FORZAR EL TIEMPO REAL
+  cdr: ChangeDetectorRef = inject(ChangeDetectorRef); 
+  
+  registro = { turno: '', encargado: '', fecha: new Date().toISOString().split('T')[0], trabajadores: null };
+  inventario: Alimento[] = []; 
 
   ngOnInit() {
-    setTimeout(() => {
-      this.mostrarSplash = false;
-    }, 3000);
+    setTimeout(() => { this.mostrarSplash = false; }, 1800);
 
-    this.inventario.forEach(item => this.actualizarEstatus(item));
+    const inventarioRef = collection(this.firestore, 'inventario');
+    
+    // ESCUCHADOR EN TIEMPO REAL
+    collectionData(inventarioRef, { idField: 'id' }).subscribe((datos: any[]) => {
+      this.inventario = datos;
+      this.inventario.forEach(item => this.actualizarEstatus(item));
+      
+      // LA MAGIA ESTÁ AQUÍ: Obliga a la interfaz a actualizarse instantáneamente
+      this.cdr.detectChanges(); 
+    });
+  }
+
+  importarExcel(event: any) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    
+    reader.onload = async (e: any) => {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      const datosExcel = XLSX.utils.sheet_to_json(worksheet) as any[];
+
+      let categoriaActual = 'GENERAL';
+
+      for (const filaRaw of datosExcel) {
+        const fila: any = {};
+        for (const key in filaRaw) {
+          fila[key.trim().toUpperCase()] = filaRaw[key];
+        }
+
+        if (fila['__EMPTY'] && typeof fila['__EMPTY'] === 'string' && fila['__EMPTY'].trim() !== '') {
+          categoriaActual = fila['__EMPTY'].trim();
+        } else if (fila['CATEGORIA']) {
+          categoriaActual = fila['CATEGORIA'].trim();
+        }
+
+        const nombreAlimento = fila['ALIMENTO'];
+        if (!nombreAlimento) continue;
+
+        const docId = nombreAlimento.toLowerCase().trim().replace(/\s+/g, '-');
+        
+        const limpiarNumero = (valor: any) => {
+          if (!valor) return 0;
+          const num = parseFloat(valor.toString().replace(/[^\d.-]/g, ''));
+          return isNaN(num) ? 0 : num;
+        };
+
+        const nuevoAlimento: Alimento = {
+          categoria: categoriaActual,
+          alimento: nombreAlimento.trim(),
+          maxima: limpiarNumero(fila['CANTIDAD MÁXIMA'] || fila['CANTIDAD MAXIMA'] || fila['CANTIDAD KIMA']),
+          minima: limpiarNumero(fila['CANTIDAD MINIMA'] || fila['CANTIDAD MÍNIMA']),
+          actual: limpiarNumero(fila['CANTIDAD ACTUAL']),
+          porcion: fila['PORCION POR PERSONA'] || fila['PORCIÓN'] || 'Pendiente'
+        };
+
+        if (nuevoAlimento.actual === 0) {
+          nuevoAlimento.actual = nuevoAlimento.maxima;
+        }
+
+        try {
+          const docRef = doc(this.firestore, `inventario/${docId}`);
+          await setDoc(docRef, nuevoAlimento);
+        } catch (error) {
+          console.error("Error al subir a Firebase:", error);
+        }
+      }
+      
+      alert('¡Importación completada! Los datos ya están en pantalla.');
+      event.target.value = ''; 
+    };
+
+    reader.readAsArrayBuffer(file);
+  }
+
+  exportarExcel() {
+    if (!this.inventario || this.inventario.length === 0) {
+      alert('No hay datos en la tabla para exportar.');
+      return;
+    }
+
+    const datosAExportar = this.inventario.map(item => ({
+      'CATEGORIA': item.categoria,
+      'ALIMENTO': item.alimento,
+      'CANTIDAD MÁXIMA': item.maxima,
+      'CANTIDAD MÍNIMA': item.minima,
+      'CANTIDAD ACTUAL': item.actual,
+      'PORCIÓN POR PERSONA': item.porcion,
+      'ESTATUS': item.textoEstatus
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(datosAExportar);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Inventario MEXCF');
+    
+    const nombreArchivo = `Inventario_${this.registro.turno || 'General'}_${this.registro.fecha}.xlsx`;
+    XLSX.writeFile(workbook, nombreArchivo);
   }
 
   actualizarEstatus(item: Alimento) {
@@ -88,16 +152,15 @@ export class HomePage implements OnInit {
     }
   }
 
-  restarConsumo(item: Alimento) {
-    if (item.consumoTurno && item.consumoTurno > 0) {
-      item.actual = Number((item.actual - item.consumoTurno).toFixed(2));
+  async restarConsumo(item: Alimento) {
+    if (item.consumoTurno && item.consumoTurno > 0 && item.id) {
+      const nuevaCantidad = Number((item.actual - item.consumoTurno).toFixed(2));
+      const cantidadFinal = nuevaCantidad < 0 ? 0 : nuevaCantidad;
       
-      if (item.actual < 0) {
-        item.actual = 0;
-      }
+      const docRef = doc(this.firestore, `inventario/${item.id}`);
+      await setDoc(docRef, { actual: cantidadFinal }, { merge: true });
       
       item.consumoTurno = null;
-      this.actualizarEstatus(item);
     }
   }
 
