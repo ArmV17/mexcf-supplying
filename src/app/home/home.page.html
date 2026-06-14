@@ -1,25 +1,71 @@
+<!-- =============================================
+     SPLASH SCREEN — LOGÍSTIC SUPPLYING
+     Estilo neón con partículas y fases animadas
+     ============================================= -->
 <div class="splash-screen" [class.oculto]="!mostrarSplash">
-  <div class="splash-background"></div>
-  <div class="logo-wrapper">
-    <div class="glow-ring"></div>
-    <img src="assets/icon/Logo.png" alt="Logo MEXCF" class="logo-creativo">
+
+  <!-- Fondo radial -->
+  <div class="splash-bg"></div>
+
+  <!-- Partículas flotantes (fase 3) -->
+  <div class="splash-particles" [class.visible]="splashFase >= 3">
+    <span class="p p1"></span><span class="p p2"></span>
+    <span class="p p3"></span><span class="p p4"></span>
+    <span class="p p5"></span><span class="p p6"></span>
   </div>
+
+  <!-- Anillo exterior giratorio -->
+  <div class="splash-ring-outer" [class.visible]="splashFase >= 1"></div>
+
+  <!-- Anillo interior pulsante -->
+  <div class="splash-ring-inner" [class.visible]="splashFase >= 2"></div>
+
+  <!-- Logo + Texto -->
+  <div class="splash-content">
+    <div class="splash-logo-wrap" [class.visible]="splashFase >= 1">
+      <img src="assets/icon/Logo.png" alt="Logístic Supplying" class="splash-logo">
+    </div>
+    <div class="splash-text" [class.visible]="splashFase >= 2">
+      <span class="splash-brand">LOGÍSTIC</span>
+      <span class="splash-sub">SUPPLYING</span>
+      <span class="splash-tagline">Calidad que se sirve todos los días</span>
+    </div>
+  </div>
+
+  <!-- Línea de carga inferior -->
+  <div class="splash-loader" [class.visible]="splashFase >= 2">
+    <div class="splash-loader-bar"></div>
+  </div>
+
 </div>
 
+<!-- =============================================
+     APP PRINCIPAL
+     ============================================= -->
 <div class="theme-wrapper" [attr.data-theme]="isDarkMode ? 'dark' : 'light'">
-  
+
+  <!-- ── HEADER ── -->
   <ion-header class="ion-no-border">
     <ion-toolbar class="custom-toolbar">
       <div class="header-container">
+
         <div class="logo-section">
           <img src="assets/icon/Logo.png" alt="Logo" class="header-logo">
-          <h1 class="header-title">MEXCF Supplying</h1>
+          <h1 class="header-title">
+            <span>LOGÍSTIC</span> Supplying
+          </h1>
         </div>
-        
+
         <ion-segment [(ngModel)]="seccionActual" class="modern-segment" mode="ios">
-          <ion-segment-button value="resumen"><ion-label>Resumen</ion-label></ion-segment-button>
-          <ion-segment-button value="gestion"><ion-label>Gestión</ion-label></ion-segment-button>
-          <ion-segment-button value="inventario"><ion-label>Inventario</ion-label></ion-segment-button>
+          <ion-segment-button value="resumen">
+            <ion-label>Resumen</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="gestion">
+            <ion-label>Gestión</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="inventario">
+            <ion-label>Inventario</ion-label>
+          </ion-segment-button>
         </ion-segment>
 
         <div class="theme-toggle-container">
@@ -27,18 +73,26 @@
             {{ isDarkMode ? '☀️ Día' : '🌙 Noche' }}
           </ion-button>
         </div>
+
       </div>
     </ion-toolbar>
   </ion-header>
 
+  <!-- ── CONTENIDO ── -->
   <ion-content class="custom-content">
-    
+
+    <!-- ══════════════════════════════════════
+         SECCIÓN: RESUMEN
+         ══════════════════════════════════════ -->
     <div *ngIf="seccionActual === 'resumen'" class="dashboard-layout fade-in">
+
       <div class="main-column">
+
+        <!-- Hero KPI -->
         <div class="modern-card hero-card">
           <div class="hero-text">
             <h2>Inventario en Tiempo Real</h2>
-            <p>Monitoreo de abastecimiento de comedor.</p>
+            <p>Monitoreo de abastecimiento — Comedor Industrial</p>
           </div>
           <div class="hero-kpi">
             <h3>{{ inventario.length }}</h3>
@@ -46,26 +100,89 @@
           </div>
         </div>
 
-        <div class="modern-card">
-          <h3 class="card-title">Dinámica de Consumo</h3>
-          <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" 
-                     [xaxis]="chartOptions.xaxis" [colors]="chartOptions.colors">
+        <!-- KPIs rápidos -->
+        <div class="kpi-grid">
+          <div class="kpi-card verde">
+            <div class="kpi-label">En Stock</div>
+            <div class="kpi-value">
+              {{ countOk }}
+              <small>items</small>
+            </div>
+          </div>
+          <div class="kpi-card naranja">
+            <div class="kpi-label">Reabastecer</div>
+            <div class="kpi-value">
+              {{ countWarn }}
+              <small>items</small>
+            </div>
+          </div>
+          <div class="kpi-card rojo">
+            <div class="kpi-label">Agotados</div>
+            <div class="kpi-value">
+              {{ countErr }}
+              <small>items</small>
+            </div>
+          </div>
+          <div class="kpi-card azul">
+            <div class="kpi-label">Total registros</div>
+            <div class="kpi-value">
+              {{ inventario.length }}
+              <small>alimentos</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gráfica -->
+        <div class="modern-card" style="margin-top: 20px;">
+          <h3 class="card-title">Dinámica de Stock</h3>
+          <apx-chart
+            [series]="chartOptions.series"
+            [chart]="chartOptions.chart"
+            [xaxis]="chartOptions.xaxis"
+            [colors]="chartOptions.colors"
+            [plotOptions]="chartOptions.plotOptions"
+            [dataLabels]="chartOptions.dataLabels"
+            [grid]="chartOptions.grid">
           </apx-chart>
         </div>
+
       </div>
 
+      <!-- Panel lateral -->
       <div class="side-column">
         <div class="modern-card">
           <h3 class="card-title">Acciones Rápidas</h3>
-          <ion-button expand="block" class="primary-btn" (click)="cerrarTurno()">Cerrar Turno</ion-button>
-          <ion-button expand="block" fill="outline" class="outline-btn" (click)="exportarExcel()">Exportar Reporte</ion-button>
+          <ion-button expand="block" class="primary-btn" (click)="cerrarTurno()">
+            Cerrar Turno
+          </ion-button>
+          <ion-button expand="block" fill="outline" class="outline-btn" (click)="exportarExcel()">
+            Exportar Reporte
+          </ion-button>
+        </div>
+
+        <!-- Semáforo rápido -->
+        <div class="modern-card" style="margin-top: 16px;">
+          <h3 class="card-title">Semáforo</h3>
+          <div class="semaforo-list">
+            <div *ngFor="let item of inventario" class="semaforo-row">
+              <span class="semaforo-dot" [ngClass]="item.claseEstatus"></span>
+              <span class="semaforo-nombre">{{ item.alimento }}</span>
+              <span class="semaforo-valor">{{ item.actual }} {{ item.unidad }}</span>
+            </div>
+          </div>
         </div>
       </div>
+
     </div>
 
+    <!-- ══════════════════════════════════════
+         SECCIÓN: GESTIÓN
+         ══════════════════════════════════════ -->
     <div *ngIf="seccionActual === 'gestion'" class="dashboard-grid fade-in">
+
+      <!-- Registrar Consumo -->
       <div class="modern-card">
-        <h3 class="card-title" style="color: var(--color-naranja);">Registrar Consumo</h3>
+        <h3 class="card-title" style="color: var(--verde-neon);">Registrar Consumo</h3>
         <ion-row>
           <ion-col size="12" size-md="3">
             <ion-item class="modern-input">
@@ -80,64 +197,107 @@
             <ion-item class="modern-input">
               <ion-label position="stacked">Alimento</ion-label>
               <ion-select [(ngModel)]="formConsumo.idAlimento" interface="popover">
-                <ion-select-option *ngFor="let item of inventario" [value]="item.id">{{ item.alimento }}</ion-select-option>
+                <ion-select-option *ngFor="let item of inventario" [value]="item.id">
+                  {{ item.alimento }} ({{ item.unidad }})
+                </ion-select-option>
               </ion-select>
             </ion-item>
           </ion-col>
           <ion-col size="12" size-md="3">
             <ion-item class="modern-input">
               <ion-label position="stacked">Cantidad</ion-label>
-              <ion-input type="number" [(ngModel)]="formConsumo.cantidad"></ion-input>
+              <ion-input type="number" [(ngModel)]="formConsumo.cantidad" min="0"></ion-input>
             </ion-item>
           </ion-col>
-          <ion-col size="12" size-md="2">
-            <ion-button expand="block" class="primary-btn" (click)="registrarConsumoTurno()">Restar</ion-button>
+          <ion-col size="12" size-md="2" class="ion-align-self-center">
+            <ion-button expand="block" class="primary-btn" (click)="registrarConsumoTurno()">
+              Restar
+            </ion-button>
           </ion-col>
         </ion-row>
       </div>
 
-      <div class="dashboard-layout" style="margin-top: 30px; padding: 0;">
+      <!-- Ingreso Stock + Nuevo Alimento -->
+      <div class="dashboard-layout" style="margin-top: 20px; padding: 0;">
+
         <div class="modern-card">
-          <h3 class="card-title" style="color: var(--color-coral);">Ingreso de Stock</h3>
+          <h3 class="card-title" style="color: var(--naranja);">Ingreso de Stock</h3>
           <ion-item class="modern-input">
             <ion-label position="stacked">Alimento</ion-label>
             <ion-select [(ngModel)]="formRestock.idAlimento" interface="popover">
-              <ion-select-option *ngFor="let item of inventario" [value]="item.id">{{ item.alimento }}</ion-select-option>
+              <ion-select-option *ngFor="let item of inventario" [value]="item.id">
+                {{ item.alimento }} ({{ item.unidad }})
+              </ion-select-option>
             </ion-select>
           </ion-item>
           <ion-item class="modern-input">
             <ion-label position="stacked">Cantidad recibida</ion-label>
-            <ion-input type="number" [(ngModel)]="formRestock.cantidad"></ion-input>
+            <ion-input type="number" [(ngModel)]="formRestock.cantidad" min="0"></ion-input>
           </ion-item>
-          <ion-button expand="block" class="primary-btn" (click)="registrarIngresoStock()">Sumar Stock</ion-button>
+          <ion-button expand="block" class="primary-btn" (click)="registrarIngresoStock()">
+            Sumar Stock
+          </ion-button>
         </div>
 
         <div class="modern-card">
-          <h3 class="card-title" style="color: var(--color-calabaza);">Nuevo Alimento</h3>
-          <ion-item class="modern-input"><ion-input placeholder="Nombre" [(ngModel)]="formNuevo.alimento"></ion-input></ion-item>
-          <ion-item class="modern-input"><ion-input type="number" placeholder="Máximo" [(ngModel)]="formNuevo.maxima"></ion-input></ion-item>
-          <ion-item class="modern-input"><ion-input type="number" placeholder="Mínimo" [(ngModel)]="formNuevo.minima"></ion-input></ion-item>
-          <ion-button expand="block" class="primary-btn" (click)="agregarNuevoAlimento()">Guardar en BD</ion-button>
+          <h3 class="card-title" style="color: var(--azul-medio);">Nuevo Alimento</h3>
+          <ion-item class="modern-input">
+            <ion-input placeholder="Nombre del alimento" [(ngModel)]="formNuevo.alimento"></ion-input>
+          </ion-item>
+          <ion-item class="modern-input">
+            <ion-label position="stacked">Unidad de medida</ion-label>
+            <ion-select [(ngModel)]="formNuevo.unidad" interface="popover">
+              <ion-select-option value="kg">Kilogramos (kg)</ion-select-option>
+              <ion-select-option value="g">Gramos (g)</ion-select-option>
+              <ion-select-option value="L">Litros (L)</ion-select-option>
+              <ion-select-option value="mL">Mililitros (mL)</ion-select-option>
+              <ion-select-option value="pza">Piezas (pza)</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item class="modern-input">
+            <ion-input type="number" placeholder="Stock máximo" [(ngModel)]="formNuevo.maxima"></ion-input>
+          </ion-item>
+          <ion-item class="modern-input">
+            <ion-input type="number" placeholder="Stock mínimo" [(ngModel)]="formNuevo.minima"></ion-input>
+          </ion-item>
+          <ion-button expand="block" class="primary-btn" (click)="agregarNuevoAlimento()">
+            Guardar en BD
+          </ion-button>
         </div>
+
       </div>
     </div>
 
+    <!-- ══════════════════════════════════════
+         SECCIÓN: INVENTARIO
+         ══════════════════════════════════════ -->
     <div *ngIf="seccionActual === 'inventario'" class="dashboard-grid fade-in">
       <div class="modern-card" style="padding: 0; overflow-x: auto;">
         <table class="modern-table">
           <thead>
             <tr>
-              <th>Categoría</th><th>Alimento</th><th>Máx</th><th>Mín</th><th>Actual</th><th>Estatus</th>
+              <th>Categoría</th>
+              <th>Alimento</th>
+              <th>Unidad</th>
+              <th>Máx</th>
+              <th>Mín</th>
+              <th>Actual</th>
+              <th>Estatus</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let item of inventario">
               <td class="text-muted">{{ item.categoria }}</td>
               <td class="fw-bold">{{ item.alimento }}</td>
+              <td class="text-muted">{{ item.unidad }}</td>
               <td class="text-muted">{{ item.maxima }}</td>
               <td class="text-muted">{{ item.minima }}</td>
               <td class="fw-bold">{{ item.actual }}</td>
-              <td><span class="status-badge" [ngStyle]="{'background': item.colorEstatus + '22', 'color': item.colorEstatus}">{{ item.textoEstatus }}</span></td>
+              <td>
+                <span class="status-badge" [ngClass]="item.claseEstatus">
+                  {{ item.textoEstatus }}
+                </span>
+              </td>
             </tr>
           </tbody>
         </table>

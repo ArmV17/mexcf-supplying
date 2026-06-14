@@ -1,23 +1,41 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
-import { Firestore, collection, doc, updateDoc, setDoc, collectionData, addDoc } from '@angular/fire/firestore';
+import { IonicModule, ToastController } from '@ionic/angular';
+import {
+  Firestore, collection, doc,
+  updateDoc, setDoc, collectionData, addDoc
+} from '@angular/fire/firestore';
+import { Subscription } from 'rxjs';
 import * as XLSX from 'xlsx';
 import { NgApexchartsModule } from 'ng-apexcharts';
+import { ApexChart, ApexXAxis, ApexDataLabels, ApexPlotOptions, ApexGrid } from 'ng-apexcharts';
 
+// ── Interfaces ───────────────────────────────────────────────
 interface Alimento {
   id?: string;
-  categoria: string;
-  alimento: string;
-  maxima: number;
-  minima: number;
-  actual: number;
-  porcion: string;
+  categoria:    string;
+  alimento:     string;
+  unidad:       string;   // kg | L | mL | g | pza
+  maxima:       number;
+  minima:       number;
+  actual:       number;
+  porcion:      string;
+  claseEstatus?: 'ok' | 'warn' | 'err';
   textoEstatus?: string;
-  colorEstatus?: string;
 }
 
+interface ChartOptions {
+  series:      { name: string; data: number[] }[];
+  chart:       ApexChart;
+  xaxis:       ApexXAxis;
+  colors:      string[];
+  plotOptions: ApexPlotOptions;
+  dataLabels:  ApexDataLabels;
+  grid:        ApexGrid;
+}
+
+// ── Componente ───────────────────────────────────────────────
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -25,115 +43,206 @@ interface Alimento {
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule, NgApexchartsModule]
 })
-export class HomePage implements OnInit {
-  mostrarSplash = true;
-  firestore: Firestore = inject(Firestore);
-  cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
+export class HomePage implements OnInit, OnDestroy {
 
-  isDarkMode: boolean = false;
-  seccionActual: string = 'resumen';
+  // Splash
+  mostrarSplash = true;
+  splashFase    = 0;
+
+  // Tema
+  isDarkMode    = true;
+  seccionActual = 'resumen';
+
+  // Datos
   inventario: Alimento[] = [];
+  private sub!: Subscription;
 
   // Formularios
-  formNuevo = { categoria: '', alimento: '', maxima: null, minima: null, porcion: '' };
-  formRestock = { idAlimento: '', cantidad: null };
-  formConsumo = { idAlimento: '', turno: '1ro', cantidad: null, encargado: '' };
-  
-  // Opciones de Gráfica
-  public chartOptions: any;
+  formNuevo   = { categoria: '', alimento: '', unidad: 'kg', maxima: null as number|null, minima: null as number|null, porcion: '' };
+  formRestock = { idAlimento: '', cantidad: null as number|null };
+  formConsumo = { idAlimento: '', turno: '1ro', cantidad: null as number|null };
 
+  // Gráfica
+  public chartOptions!: ChartOptions;
+
+  // Inyecciones
+  private firestore: Firestore         = inject(Firestore);
+  private cdr:       ChangeDetectorRef = inject(ChangeDetectorRef);
+  private toastCtrl: ToastController   = inject(ToastController);
+
+  // ── Getters para KPI cards (reemplazan el pipe statsFilter) ──
+  get countOk():   number { return this.inventario.filter(i => i.claseEstatus === 'ok').length; }
+  get countWarn(): number { return this.inventario.filter(i => i.claseEstatus === 'warn').length; }
+  get countErr():  number { return this.inventario.filter(i => i.claseEstatus === 'err').length; }
+
+  // ── Constructor ──────────────────────────────────────────────
   constructor() {
-    this.inicializarGrafica();
+    this.initGrafica();
   }
 
+  // ── Lifecycle ────────────────────────────────────────────────
   ngOnInit() {
-    setTimeout(() => { this.mostrarSplash = false; }, 1800);
+    // Splash orquestado por fases
+    setTimeout(() => { this.splashFase = 1; this.cdr.detectChanges(); }, 100);
+    setTimeout(() => { this.splashFase = 2; this.cdr.detectChanges(); }, 600);
+    setTimeout(() => { this.splashFase = 3; this.cdr.detectChanges(); }, 1100);
+    setTimeout(() => { this.mostrarSplash = false; this.cdr.detectChanges(); }, 2400);
 
-    const inventarioRef = collection(this.firestore, 'inventario');
-    collectionData(inventarioRef, { idField: 'id' }).subscribe((datos: any[]) => {
+    // Firestore — con cleanup automático
+    const ref = collection(this.firestore, 'inventario');
+    this.sub = collectionData(ref, { idField: 'id' }).subscribe((datos: any[]) => {
       this.inventario = datos;
-      this.inventario.forEach(item => this.actualizarEstatus(item));
-      this.actualizarGrafica();
+      this.inventario.forEach(item => this.calcularEstatus(item));
+      this.refreshGrafica();
       this.cdr.detectChanges();
     });
   }
 
-  inicializarGrafica() {
+  ngOnDestroy() {
+    this.sub?.unsubscribe();
+  }
+
+  // ── Gráfica ──────────────────────────────────────────────────
+  initGrafica() {
     this.chartOptions = {
-      series: [{ name: "Stock Actual", data: [] }],
-      chart: { height: 350, type: "bar", toolbar: { show: false } },
-      xaxis: { categories: [] },
-      colors: ['#FF8C00']
+      series:      [{ name: 'Stock Actual', data: [] }],
+      chart:       {
+        height:     300,
+        type:       'bar' as const,   // <-- ChartType fix
+        toolbar:    { show: false },
+        background: 'transparent',
+        foreColor:  '#4A5A7A'
+      },
+      xaxis:       {
+        categories: [],
+        labels: { style: { colors: '#4A5A7A', fontSize: '11px' } }
+      },
+      colors:      ['#6DBE2E'],
+      plotOptions: { bar: { borderRadius: 6, columnWidth: '55%' } },
+      dataLabels:  { enabled: false },
+      grid:        { borderColor: '#1A2540' }
     };
   }
 
-  actualizarGrafica() {
-    this.chartOptions.series = [{ name: "Stock", data: this.inventario.map(i => i.actual) }];
-    this.chartOptions.xaxis = { categories: this.inventario.map(i => i.alimento) };
+  refreshGrafica() {
+    this.chartOptions = {
+      ...this.chartOptions,
+      series: [{ name: 'Stock', data: this.inventario.map(i => i.actual) }],
+      xaxis:  { ...this.chartOptions.xaxis, categories: this.inventario.map(i => i.alimento) }
+    };
   }
 
+  // ── Tema ─────────────────────────────────────────────────────
   toggleTheme() { this.isDarkMode = !this.isDarkMode; }
 
-  // --- OPERACIONES DE BASE DE DATOS ---
-
-  async agregarNuevoAlimento() {
-    if (!this.formNuevo.alimento) return;
-    const docId = this.formNuevo.alimento.toLowerCase().trim().replace(/\s+/g, '-');
-    await setDoc(doc(this.firestore, 'inventario', docId), { ...this.formNuevo });
-    alert('Alimento agregado.');
-    this.formNuevo = { categoria: '', alimento: '', maxima: null, minima: null, porcion: '' };
-  }
-
-  async registrarIngresoStock() {
-    if (!this.formRestock.idAlimento) return;
-    const item = this.inventario.find(i => i.id === this.formRestock.idAlimento);
-    if (item) {
-      await updateDoc(doc(this.firestore, 'inventario', item.id!), { 
-        actual: Number(item.actual) + Number(this.formRestock.cantidad) 
-      });
-      alert('Stock sumado.');
+  // ── Estatus semáforo ─────────────────────────────────────────
+  calcularEstatus(item: Alimento) {
+    if (item.actual <= 0) {
+      item.textoEstatus = 'AGOTADO';     item.claseEstatus = 'err';
+    } else if (item.actual <= item.minima) {
+      item.textoEstatus = 'REABASTECER'; item.claseEstatus = 'warn';
+    } else {
+      item.textoEstatus = 'EN STOCK';    item.claseEstatus = 'ok';
     }
   }
 
+  // ── Firestore: Consumo ───────────────────────────────────────
   async registrarConsumoTurno() {
-    if (!this.formConsumo.idAlimento) return;
+    if (!this.formConsumo.idAlimento || !this.formConsumo.cantidad) {
+      return this.toast('Selecciona alimento y cantidad.', 'warning');
+    }
+    if (Number(this.formConsumo.cantidad) <= 0) {
+      return this.toast('La cantidad debe ser mayor a 0.', 'warning');
+    }
     const item = this.inventario.find(i => i.id === this.formConsumo.idAlimento);
-    if (item) {
-      const nueva = Math.max(0, Number(item.actual) - Number(this.formConsumo.cantidad));
+    if (!item) return;
+    const nueva = Math.max(0, Number(item.actual) - Number(this.formConsumo.cantidad));
+    try {
       await updateDoc(doc(this.firestore, 'inventario', item.id!), { actual: nueva });
-      alert('Consumo registrado.');
+      this.formConsumo.cantidad = null;
+      this.toast(`Consumo registrado correctamente.`, 'success');
+    } catch {
+      this.toast('Error al registrar consumo.', 'danger');
     }
   }
 
-  // --- CERRAR TURNO Y EXPORTAR ---
+  // ── Firestore: Restock ───────────────────────────────────────
+  async registrarIngresoStock() {
+    if (!this.formRestock.idAlimento || !this.formRestock.cantidad) {
+      return this.toast('Selecciona alimento y cantidad.', 'warning');
+    }
+    const item = this.inventario.find(i => i.id === this.formRestock.idAlimento);
+    if (!item) return;
+    try {
+      await updateDoc(doc(this.firestore, 'inventario', item.id!), {
+        actual: Number(item.actual) + Number(this.formRestock.cantidad)
+      });
+      this.formRestock.cantidad = null;
+      this.toast('Stock actualizado correctamente.', 'success');
+    } catch {
+      this.toast('Error al actualizar stock.', 'danger');
+    }
+  }
 
+  // ── Firestore: Nuevo Alimento ────────────────────────────────
+  async agregarNuevoAlimento() {
+    if (!this.formNuevo.alimento?.trim()) {
+      return this.toast('El nombre del alimento es requerido.', 'warning');
+    }
+    if (!this.formNuevo.maxima || !this.formNuevo.minima) {
+      return this.toast('Ingresa cantidades máxima y mínima.', 'warning');
+    }
+    const docId = this.formNuevo.alimento.toLowerCase().trim().replace(/\s+/g, '-');
+    try {
+      await setDoc(doc(this.firestore, 'inventario', docId), { ...this.formNuevo, actual: 0 });
+      this.formNuevo = { categoria: '', alimento: '', unidad: 'kg', maxima: null, minima: null, porcion: '' };
+      this.toast('Alimento agregado a la base de datos.', 'success');
+    } catch {
+      this.toast('Error al guardar el alimento.', 'danger');
+    }
+  }
+
+  // ── Cerrar Turno ─────────────────────────────────────────────
   async cerrarTurno() {
-    // 1. Guardar reporte en historial
     try {
       await addDoc(collection(this.firestore, 'historial_turnos'), {
-        fecha: new Date().toISOString(),
+        fecha:              new Date().toISOString(),
         inventarioSnapshot: this.inventario,
-        totalItems: this.inventario.length
+        totalItems:         this.inventario.length
       });
-      alert('Turno cerrado: Historial guardado.');
+      this.toast('Turno cerrado. Historial guardado.', 'success');
       this.exportarExcel();
-    } catch (e) { alert('Error al cerrar turno.'); }
-  }
-
-  exportarExcel() {
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.inventario);
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Inventario');
-    XLSX.writeFile(wb, 'Reporte_Inventario.xlsx');
-  }
-
-  actualizarEstatus(item: Alimento) {
-    if (item.actual <= 0) {
-      item.textoEstatus = 'AGOTADO'; item.colorEstatus = 'var(--status-rojo)';
-    } else if (item.actual <= item.minima) {
-      item.textoEstatus = 'REABASTECER'; item.colorEstatus = 'var(--status-ambar)';
-    } else {
-      item.textoEstatus = 'EN STOCK'; item.colorEstatus = 'var(--status-verde)';
+    } catch {
+      this.toast('Error al cerrar el turno.', 'danger');
     }
+  }
+
+  // ── Exportar Excel ───────────────────────────────────────────
+  exportarExcel() {
+    const datos = this.inventario.map(i => ({
+      Categoría:      i.categoria,
+      Alimento:       i.alimento,
+      Unidad:         i.unidad,
+      Máximo:         i.maxima,
+      Mínimo:         i.minima,
+      'Stock Actual': i.actual,
+      Estatus:        i.textoEstatus
+    }));
+    const ws = XLSX.utils.json_to_sheet(datos);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Inventario');
+    XLSX.writeFile(wb, `Reporte_${new Date().toLocaleDateString('es-MX').replace(/\//g, '-')}.xlsx`);
+  }
+
+  // ── Toast helper ─────────────────────────────────────────────
+  private async toast(msg: string, color: 'success' | 'warning' | 'danger') {
+    const t = await this.toastCtrl.create({
+      message:  msg,
+      duration: 2800,
+      position: 'bottom',
+      color,
+      cssClass: 'custom-toast'
+    });
+    await t.present();
   }
 }
