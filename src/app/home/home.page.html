@@ -1,26 +1,15 @@
 <!-- =============================================
      SPLASH SCREEN — LOGÍSTIC SUPPLYING
-     Estilo neón con partículas y fases animadas
      ============================================= -->
 <div class="splash-screen" [class.oculto]="!mostrarSplash">
-
-  <!-- Fondo radial -->
   <div class="splash-bg"></div>
-
-  <!-- Partículas flotantes (fase 3) -->
   <div class="splash-particles" [class.visible]="splashFase >= 3">
     <span class="p p1"></span><span class="p p2"></span>
     <span class="p p3"></span><span class="p p4"></span>
     <span class="p p5"></span><span class="p p6"></span>
   </div>
-
-  <!-- Anillo exterior giratorio -->
   <div class="splash-ring-outer" [class.visible]="splashFase >= 1"></div>
-
-  <!-- Anillo interior pulsante -->
   <div class="splash-ring-inner" [class.visible]="splashFase >= 2"></div>
-
-  <!-- Logo + Texto -->
   <div class="splash-content">
     <div class="splash-logo-wrap" [class.visible]="splashFase >= 1">
       <img src="assets/icon/Logo.png" alt="Logístic Supplying" class="splash-logo">
@@ -31,278 +20,460 @@
       <span class="splash-tagline">Calidad que se sirve todos los días</span>
     </div>
   </div>
-
-  <!-- Línea de carga inferior -->
   <div class="splash-loader" [class.visible]="splashFase >= 2">
     <div class="splash-loader-bar"></div>
   </div>
-
 </div>
 
 <!-- =============================================
      APP PRINCIPAL
      ============================================= -->
-<div class="theme-wrapper" [attr.data-theme]="isDarkMode ? 'dark' : 'light'">
+<div class="app-root" [class.is-dark]="isDarkMode">
 
-  <!-- ── HEADER ── -->
-  <ion-header class="ion-no-border">
-    <ion-toolbar class="custom-toolbar">
-      <div class="header-container">
+  <!-- ══════════════════════════════════════
+       VISTA: LANDING / INICIO
+       Visible cuando seccionActual === 'inicio'
+       ══════════════════════════════════════ -->
+  <div *ngIf="seccionActual === 'inicio'" class="landing-view">
 
-        <div class="logo-section">
-          <img src="assets/icon/Logo.png" alt="Logo" class="header-logo">
-          <h1 class="header-title">
-            <span>LOGÍSTIC</span> Supplying
-          </h1>
+    <!-- NAV -->
+    <nav class="landing-nav">
+      <div class="lnav-brand">
+        <img src="assets/icon/Logo.png" alt="Logo" class="lnav-logo">
+        <div class="lnav-brand-text">
+          <strong>LOGÍSTIC</strong> Supplying
+          <small>Control Inteligente de Inventarios</small>
         </div>
-
-        <ion-segment [(ngModel)]="seccionActual" class="modern-segment" mode="ios">
-          <ion-segment-button value="resumen">
-            <ion-label>Resumen</ion-label>
-          </ion-segment-button>
-          <ion-segment-button value="gestion">
-            <ion-label>Gestión</ion-label>
-          </ion-segment-button>
-          <ion-segment-button value="inventario">
-            <ion-label>Inventario</ion-label>
-          </ion-segment-button>
-        </ion-segment>
-
-        <div class="theme-toggle-container">
-          <ion-button fill="clear" (click)="toggleTheme()" class="theme-btn">
-            {{ isDarkMode ? '☀️ Día' : '🌙 Noche' }}
-          </ion-button>
-        </div>
-
       </div>
-    </ion-toolbar>
-  </ion-header>
+    </nav>
 
-  <!-- ── CONTENIDO ── -->
-  <ion-content class="custom-content">
-
-    <!-- ══════════════════════════════════════
-         SECCIÓN: RESUMEN
-         ══════════════════════════════════════ -->
-    <div *ngIf="seccionActual === 'resumen'" class="dashboard-layout fade-in">
-
-      <div class="main-column">
-
-        <!-- Hero KPI -->
-        <div class="modern-card hero-card">
-          <div class="hero-text">
-            <h2>Inventario en Tiempo Real</h2>
-            <p>Monitoreo de abastecimiento — Comedor Industrial</p>
-          </div>
-          <div class="hero-kpi">
-            <h3>{{ inventario.length }}</h3>
-            <span>Total Alimentos</span>
+    <!-- HERO -->
+    <div class="landing-hero">
+      <div class="hero-left">
+        <!-- Logo área -->
+        <div class="hero-logo-area">
+          <img src="assets/icon/Logo.png" alt="Logo" class="hero-logo-img">
+          <div class="hero-brand">
+            <div class="hero-brand-name">LOGÍSTIC</div>
+            <div class="hero-brand-sub">— SUPPLYING —</div>
+            <div class="hero-brand-tag">CALIDAD QUE SE SIRVE TODOS LOS DÍAS</div>
           </div>
         </div>
 
-        <!-- KPIs rápidos -->
-        <div class="kpi-grid">
-          <div class="kpi-card verde">
-            <div class="kpi-label">En Stock</div>
-            <div class="kpi-value">
-              {{ countOk }}
-              <small>items</small>
-            </div>
+        <h1 class="hero-headline">
+          CONTROL INTELIGENTE<br>
+          PARA UN ABASTECIMIENTO<br>
+          <span class="hero-accent">EFICIENTE</span>
+        </h1>
+        <p class="hero-desc">
+          Alimentamos tu día, impulsamos tu productividad.
+          Plataforma diseñada para optimizar el control de
+          inventarios en comedores industriales.
+        </p>
+
+        <div class="hero-features">
+          <div class="hfeat">
+            <div class="hfeat-icon">📦</div>
+            <span>Control de existencias</span>
           </div>
-          <div class="kpi-card naranja">
-            <div class="kpi-label">Reabastecer</div>
-            <div class="kpi-value">
-              {{ countWarn }}
-              <small>items</small>
-            </div>
+          <div class="hfeat">
+            <div class="hfeat-icon">📅</div>
+            <span>Supervisión de caducidades</span>
           </div>
-          <div class="kpi-card rojo">
-            <div class="kpi-label">Agotados</div>
-            <div class="kpi-value">
-              {{ countErr }}
-              <small>items</small>
-            </div>
+          <div class="hfeat">
+            <div class="hfeat-icon">📊</div>
+            <span>Reducción de desperdicios</span>
           </div>
-          <div class="kpi-card azul">
-            <div class="kpi-label">Total registros</div>
-            <div class="kpi-value">
-              {{ inventario.length }}
-              <small>alimentos</small>
-            </div>
+          <div class="hfeat">
+            <div class="hfeat-icon">🚦</div>
+            <span>Sistema de semáforo de inventario</span>
           </div>
         </div>
 
-        <!-- Gráfica -->
-        <div class="modern-card" style="margin-top: 20px;">
-          <h3 class="card-title">Dinámica de Stock</h3>
-          <apx-chart
-            [series]="chartOptions.series"
-            [chart]="chartOptions.chart"
-            [xaxis]="chartOptions.xaxis"
-            [colors]="chartOptions.colors"
-            [plotOptions]="chartOptions.plotOptions"
-            [dataLabels]="chartOptions.dataLabels"
-            [grid]="chartOptions.grid">
-          </apx-chart>
-        </div>
-
-      </div>
-
-      <!-- Panel lateral -->
-      <div class="side-column">
-        <div class="modern-card">
-          <h3 class="card-title">Acciones Rápidas</h3>
-          <ion-button expand="block" class="primary-btn" (click)="cerrarTurno()">
-            Cerrar Turno
-          </ion-button>
-          <ion-button expand="block" fill="outline" class="outline-btn" (click)="exportarExcel()">
-            Exportar Reporte
-          </ion-button>
-        </div>
-
-        <!-- Semáforo rápido -->
-        <div class="modern-card" style="margin-top: 16px;">
-          <h3 class="card-title">Semáforo</h3>
-          <div class="semaforo-list">
-            <div *ngFor="let item of inventario" class="semaforo-row">
-              <span class="semaforo-dot" [ngClass]="item.claseEstatus"></span>
-              <span class="semaforo-nombre">{{ item.alimento }}</span>
-              <span class="semaforo-valor">{{ item.actual }} {{ item.unidad }}</span>
-            </div>
-          </div>
+        <div class="hero-cta">
+          <button class="btn-hero-primary" (click)="seccionActual='resumen'">
+            📋 VER INVENTARIO
+          </button>
         </div>
       </div>
 
+      <!-- Imagen de fondo derecha -->
+      <div class="hero-right">
+        <img src="assets/icon/Foto1.jpeg" alt="Almacén" class="hero-bg-img"
+             onerror="this.style.display='none'">
+        <div class="hero-img-fallback">
+          <span>📷</span>
+          <p>Foto1 — tu imagen aquí</p>
+        </div>
+      </div>
     </div>
 
-    <!-- ══════════════════════════════════════
-         SECCIÓN: GESTIÓN
-         ══════════════════════════════════════ -->
-    <div *ngIf="seccionActual === 'gestion'" class="dashboard-grid fade-in">
+    <!-- STATS BAR -->
+    <div class="landing-stats">
+      <div class="lstat">
+        <span class="lstat-icon">🛡️</span>
+        <div>
+          <p>Inventario seguro</p>
+          <small>Información actualizada en tiempo real</small>
+        </div>
+      </div>
+      <div class="lstat">
+        <span class="lstat-icon">⏱️</span>
+        <div>
+          <p>Ahorra tiempo</p>
+          <small>Procesos más rápidos y eficientes</small>
+        </div>
+      </div>
+      <div class="lstat">
+        <span class="lstat-icon">💵</span>
+        <div>
+          <p>Reduce costos</p>
+          <small>Menos desperdicio, más ahorro</small>
+        </div>
+      </div>
+      <div class="lstat">
+        <span class="lstat-icon">👥</span>
+        <div>
+          <p>Mejora el servicio</p>
+          <small>Trabajadores satisfechos, mejores resultados</small>
+        </div>
+      </div>
+    </div>
 
-      <!-- Registrar Consumo -->
-      <div class="modern-card">
-        <h3 class="card-title" style="color: var(--verde-neon);">Registrar Consumo</h3>
-        <ion-row>
-          <ion-col size="12" size-md="3">
-            <ion-item class="modern-input">
-              <ion-label position="stacked">Turno</ion-label>
-              <ion-select [(ngModel)]="formConsumo.turno" interface="popover">
-                <ion-select-option value="1ro">1er Turno</ion-select-option>
-                <ion-select-option value="2do">2do Turno</ion-select-option>
-              </ion-select>
-            </ion-item>
-          </ion-col>
-          <ion-col size="12" size-md="4">
-            <ion-item class="modern-input">
-              <ion-label position="stacked">Alimento</ion-label>
-              <ion-select [(ngModel)]="formConsumo.idAlimento" interface="popover">
-                <ion-select-option *ngFor="let item of inventario" [value]="item.id">
+  </div><!-- /landing-view -->
+
+
+  <!-- ══════════════════════════════════════
+       VISTA: DASHBOARD (Resumen/Gestión/Inventario)
+       ══════════════════════════════════════ -->
+  <div *ngIf="seccionActual !== 'inicio'" class="dashboard-view">
+
+    <!-- SIDEBAR -->
+    <aside class="db-sidebar">
+      <div class="db-sidebar-logo">
+        <img src="assets/icon/Logo.png" alt="Logo" class="db-logo-img">
+        <div class="db-logo-txt">
+          <strong>LOGÍSTIC</strong>
+          <small>Supplying</small>
+        </div>
+      </div>
+
+      <div class="db-sidebar-section">DASHBOARDS</div>
+      <div class="db-sidebar-item" (click)="seccionActual='inicio'">
+        <span>🏠</span> Inicio
+      </div>
+
+      <div class="db-sidebar-item" [class.active]="seccionActual==='resumen'"
+           (click)="seccionActual='resumen'">
+        <span>📊</span> Resumen
+      </div>
+      <div class="db-sidebar-item" [class.active]="seccionActual==='gestion'"
+           (click)="seccionActual='gestion'">
+        <span>✏️</span> Gestión
+      </div>
+      <div class="db-sidebar-item" [class.active]="seccionActual==='inventario'"
+           (click)="seccionActual='inventario'">
+        <span>📦</span> Inventario
+      </div>
+
+      <div class="db-sidebar-brand">
+        <span>LOGÍSTIC</span>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="db-main">
+
+      <!-- TOPBAR -->
+      <div class="db-topbar">
+        <div class="db-breadcrumb">
+          Dashboards /
+          <span>{{ seccionActual === 'resumen' ? 'Resumen' : seccionActual === 'gestion' ? 'Gestión' : 'Inventario' }}</span>
+        </div>
+        <div class="db-topbar-right">
+          <span class="db-date-badge">{{ fechaHoy }}</span>
+          <button class="db-icon-btn" (click)="toggleTheme()" title="Cambiar tema">
+            {{ isDarkMode ? '☀️' : '🌙' }}
+          </button>
+          <button class="db-icon-btn">🔔</button>
+          <div class="db-user-pill">
+            <div class="db-user-info">
+              <strong>Administrador</strong>
+              <small>Comedor Newrest</small>
+            </div>
+            <div class="db-user-avatar">AD</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── RESUMEN ── -->
+      <div *ngIf="seccionActual === 'resumen'" class="db-content fade-in">
+
+        <!-- KPI Row -->
+        <div class="db-kpi-row">
+          <div class="db-kpi verde">
+            <div class="db-kpi-label">EN STOCK</div>
+            <div class="db-kpi-val">{{ countOk }}<small> items</small></div>
+            <div class="db-kpi-delta up">↑ Operando</div>
+          </div>
+          <div class="db-kpi naranja">
+            <div class="db-kpi-label">REABASTECER</div>
+            <div class="db-kpi-val">{{ countWarn }}<small> items</small></div>
+            <div class="db-kpi-delta warn">⚠ Atención</div>
+          </div>
+          <div class="db-kpi rojo">
+            <div class="db-kpi-label">AGOTADOS</div>
+            <div class="db-kpi-val">{{ countErr }}<small> items</small></div>
+            <div class="db-kpi-delta err">✕ Crítico</div>
+          </div>
+          <div class="db-kpi azul">
+            <div class="db-kpi-label">TOTAL REGISTROS</div>
+            <div class="db-kpi-val">{{ inventario.length }}<small> alimentos</small></div>
+            <div class="db-kpi-delta up">Base de datos</div>
+          </div>
+        </div>
+
+        <!-- Charts + Panel derecho -->
+        <div class="db-charts-layout">
+
+          <!-- Gráfica principal -->
+          <div class="db-card db-card-chart">
+            <div class="db-card-header">
+              <span class="db-card-title">Sales Overview</span>
+              <span class="db-card-sub">Dinámica de Stock</span>
+            </div>
+
+            <!-- Fila superior: donut + mini KPIs -->
+            <div class="db-chart-top">
+
+              <!-- Donut ApexCharts real -->
+              <div class="db-donut-wrap">
+                <apx-chart
+                  [series]="donutOptions.series"
+                  [chart]="donutOptions.chart"
+                  [labels]="donutOptions.labels"
+                  [colors]="donutOptions.colors"
+                  [plotOptions]="donutOptions.plotOptions"
+                  [dataLabels]="donutOptions.dataLabels"
+                  [legend]="donutOptions.legend"
+                  [stroke]="donutOptions.stroke">
+                </apx-chart>
+                <div class="db-donut-legend">
+                  <div class="db-leg-row">
+                    <span class="db-leg-dot" style="background:#6DBE2E"></span>
+                    <span class="db-leg-name">En Stock</span>
+                    <span class="db-leg-val">{{ countOk }}</span>
+                  </div>
+                  <div class="db-leg-row">
+                    <span class="db-leg-dot" style="background:#F47920"></span>
+                    <span class="db-leg-name">Reabastecer</span>
+                    <span class="db-leg-val">{{ countWarn }}</span>
+                  </div>
+                  <div class="db-leg-row">
+                    <span class="db-leg-dot" style="background:#FF4A4A"></span>
+                    <span class="db-leg-name">Agotados</span>
+                    <span class="db-leg-val">{{ countErr }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Mini KPIs derechos -->
+              <div class="db-mini-kpis">
+                <div class="db-mini-kpi verde">
+                  <div class="db-mini-label">En Stock</div>
+                  <div class="db-mini-val">{{ countOk }}</div>
+                  <div class="db-mini-delta up">↑ Operando</div>
+                </div>
+                <div class="db-mini-kpi naranja">
+                  <div class="db-mini-label">Reabastecer</div>
+                  <div class="db-mini-val">{{ countWarn }}</div>
+                  <div class="db-mini-delta warn">⚠ Atención</div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Gráfica de barras — igual a "Total Profit" de la imagen -->
+            <div class="db-bar-wrap">
+              <div class="db-bar-header">
+                <span class="db-bar-title">Dinámica de Stock por Alimento</span>
+              </div>
+              <apx-chart
+                [series]="chartOptions.series"
+                [chart]="chartOptions.chart"
+                [xaxis]="chartOptions.xaxis"
+                [colors]="chartOptions.colors"
+                [plotOptions]="chartOptions.plotOptions"
+                [dataLabels]="chartOptions.dataLabels"
+                [grid]="chartOptions.grid"
+                [stroke]="chartOptions.stroke"
+                [fill]="chartOptions.fill">
+              </apx-chart>
+            </div>
+          </div>
+
+          <!-- Panel derecho -->
+          <div class="db-side-panel">
+
+            <!-- Acciones rápidas -->
+            <div class="db-card">
+              <div class="db-card-title">Acciones Rápidas</div>
+              <button class="db-btn-primary" (click)="cerrarTurno()">
+                Cerrar Turno
+              </button>
+              <button class="db-btn-outline" (click)="exportarExcel()">
+                Exportar Reporte
+              </button>
+            </div>
+
+            <!-- Actividad / Semáforo -->
+            <div class="db-card" style="margin-top:12px; flex:1; overflow:hidden;">
+              <div class="db-card-title">Semáforo de Stock</div>
+              <div class="db-activity-list">
+                <div *ngFor="let item of inventario" class="db-activity-row">
+                  <span class="db-act-dot" [ngClass]="item.claseEstatus"></span>
+                  <span class="db-act-name">{{ item.alimento }}</span>
+                  <span class="db-act-val">{{ item.actual }} {{ item.unidad }}</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div><!-- /resumen -->
+
+      <!-- ── GESTIÓN ── -->
+      <div *ngIf="seccionActual === 'gestion'" class="db-content fade-in">
+
+        <!-- Registrar Consumo -->
+        <div class="db-card db-form-card">
+          <div class="db-card-title" style="color:var(--verde-neon)">Registrar Consumo</div>
+          <div class="db-form-row">
+            <div class="db-form-group">
+              <label>Turno</label>
+              <select [(ngModel)]="formConsumo.turno" class="db-select">
+                <option value="1ro">1er Turno</option>
+                <option value="2do">2do Turno</option>
+              </select>
+            </div>
+            <div class="db-form-group" style="flex:2">
+              <label>Alimento</label>
+              <select [(ngModel)]="formConsumo.idAlimento" class="db-select">
+                <option value="" disabled>Seleccionar...</option>
+                <option *ngFor="let item of inventario" [value]="item.id">
                   {{ item.alimento }} ({{ item.unidad }})
-                </ion-select-option>
-              </ion-select>
-            </ion-item>
-          </ion-col>
-          <ion-col size="12" size-md="3">
-            <ion-item class="modern-input">
-              <ion-label position="stacked">Cantidad</ion-label>
-              <ion-input type="number" [(ngModel)]="formConsumo.cantidad" min="0"></ion-input>
-            </ion-item>
-          </ion-col>
-          <ion-col size="12" size-md="2" class="ion-align-self-center">
-            <ion-button expand="block" class="primary-btn" (click)="registrarConsumoTurno()">
-              Restar
-            </ion-button>
-          </ion-col>
-        </ion-row>
-      </div>
-
-      <!-- Ingreso Stock + Nuevo Alimento -->
-      <div class="dashboard-layout" style="margin-top: 20px; padding: 0;">
-
-        <div class="modern-card">
-          <h3 class="card-title" style="color: var(--naranja);">Ingreso de Stock</h3>
-          <ion-item class="modern-input">
-            <ion-label position="stacked">Alimento</ion-label>
-            <ion-select [(ngModel)]="formRestock.idAlimento" interface="popover">
-              <ion-select-option *ngFor="let item of inventario" [value]="item.id">
-                {{ item.alimento }} ({{ item.unidad }})
-              </ion-select-option>
-            </ion-select>
-          </ion-item>
-          <ion-item class="modern-input">
-            <ion-label position="stacked">Cantidad recibida</ion-label>
-            <ion-input type="number" [(ngModel)]="formRestock.cantidad" min="0"></ion-input>
-          </ion-item>
-          <ion-button expand="block" class="primary-btn" (click)="registrarIngresoStock()">
-            Sumar Stock
-          </ion-button>
+                </option>
+              </select>
+            </div>
+            <div class="db-form-group">
+              <label>Cantidad</label>
+              <input type="number" [(ngModel)]="formConsumo.cantidad"
+                     class="db-input" placeholder="0" min="0">
+            </div>
+            <button class="db-btn-primary db-btn-inline" (click)="registrarConsumoTurno()">
+              RESTAR
+            </button>
+          </div>
         </div>
 
-        <div class="modern-card">
-          <h3 class="card-title" style="color: var(--azul-medio);">Nuevo Alimento</h3>
-          <ion-item class="modern-input">
-            <ion-input placeholder="Nombre del alimento" [(ngModel)]="formNuevo.alimento"></ion-input>
-          </ion-item>
-          <ion-item class="modern-input">
-            <ion-label position="stacked">Unidad de medida</ion-label>
-            <ion-select [(ngModel)]="formNuevo.unidad" interface="popover">
-              <ion-select-option value="kg">Kilogramos (kg)</ion-select-option>
-              <ion-select-option value="g">Gramos (g)</ion-select-option>
-              <ion-select-option value="L">Litros (L)</ion-select-option>
-              <ion-select-option value="mL">Mililitros (mL)</ion-select-option>
-              <ion-select-option value="pza">Piezas (pza)</ion-select-option>
-            </ion-select>
-          </ion-item>
-          <ion-item class="modern-input">
-            <ion-input type="number" placeholder="Stock máximo" [(ngModel)]="formNuevo.maxima"></ion-input>
-          </ion-item>
-          <ion-item class="modern-input">
-            <ion-input type="number" placeholder="Stock mínimo" [(ngModel)]="formNuevo.minima"></ion-input>
-          </ion-item>
-          <ion-button expand="block" class="primary-btn" (click)="agregarNuevoAlimento()">
-            Guardar en BD
-          </ion-button>
+        <!-- Ingreso Stock + Nuevo Alimento -->
+        <div class="db-two-col" style="margin-top:16px">
+
+          <div class="db-card db-form-card">
+            <div class="db-card-title" style="color:var(--naranja)">Ingreso de Stock</div>
+            <div class="db-form-group">
+              <label>Alimento</label>
+              <select [(ngModel)]="formRestock.idAlimento" class="db-select">
+                <option value="" disabled>Seleccionar...</option>
+                <option *ngFor="let item of inventario" [value]="item.id">
+                  {{ item.alimento }} ({{ item.unidad }})
+                </option>
+              </select>
+            </div>
+            <div class="db-form-group">
+              <label>Cantidad recibida</label>
+              <input type="number" [(ngModel)]="formRestock.cantidad"
+                     class="db-input" placeholder="0" min="0">
+            </div>
+            <button class="db-btn-primary" (click)="registrarIngresoStock()">
+              SUMAR STOCK
+            </button>
+          </div>
+
+          <div class="db-card db-form-card">
+            <div class="db-card-title" style="color:var(--azul-medio)">Nuevo Alimento</div>
+            <div class="db-form-group">
+              <input type="text" [(ngModel)]="formNuevo.alimento"
+                     class="db-input" placeholder="Nombre del alimento">
+            </div>
+            <div class="db-form-group">
+              <label>Unidad de medida</label>
+              <select [(ngModel)]="formNuevo.unidad" class="db-select">
+                <option value="kg">Kilogramos (kg)</option>
+                <option value="g">Gramos (g)</option>
+                <option value="L">Litros (L)</option>
+                <option value="mL">Mililitros (mL)</option>
+                <option value="pza">Piezas (pza)</option>
+              </select>
+            </div>
+            <div class="db-form-group">
+              <input type="number" [(ngModel)]="formNuevo.maxima"
+                     class="db-input" placeholder="Stock máximo">
+            </div>
+            <div class="db-form-group">
+              <input type="number" [(ngModel)]="formNuevo.minima"
+                     class="db-input" placeholder="Stock mínimo">
+            </div>
+            <button class="db-btn-primary" (click)="agregarNuevoAlimento()">
+              GUARDAR EN BD
+            </button>
+          </div>
+
         </div>
+      </div><!-- /gestion -->
 
-      </div>
-    </div>
+      <!-- ── INVENTARIO ── -->
+      <div *ngIf="seccionActual === 'inventario'" class="db-content fade-in">
+        <div class="db-card" style="padding:0; overflow-x:auto;">
+          <div class="db-table-header">
+            <span class="db-card-title" style="padding:20px 24px; display:block">
+              Inventario Completo
+            </span>
+            <span class="db-table-badge">{{ inventario.length }} registros</span>
+          </div>
+          <table class="db-table">
+            <thead>
+              <tr>
+                <th>CATEGORÍA</th>
+                <th>ALIMENTO</th>
+                <th>UNIDAD</th>
+                <th>MÁX</th>
+                <th>MÍN</th>
+                <th>ACTUAL</th>
+                <th>ESTATUS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of inventario">
+                <td class="td-muted">{{ item.categoria }}</td>
+                <td class="td-bold">{{ item.alimento }}</td>
+                <td class="td-unit-badge">{{ item.unidad }}</td>
+                <td class="td-muted">{{ item.maxima }} <span class="td-unit">{{ item.unidad }}</span></td>
+                <td class="td-muted">{{ item.minima }} <span class="td-unit">{{ item.unidad }}</span></td>
+                <td class="td-bold">{{ item.actual }} <span class="td-unit">{{ item.unidad }}</span></td>
+                <td>
+                  <span class="db-status-badge" [ngClass]="item.claseEstatus">
+                    {{ item.textoEstatus }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div><!-- /inventario -->
 
-    <!-- ══════════════════════════════════════
-         SECCIÓN: INVENTARIO
-         ══════════════════════════════════════ -->
-    <div *ngIf="seccionActual === 'inventario'" class="dashboard-grid fade-in">
-      <div class="modern-card" style="padding: 0; overflow-x: auto;">
-        <table class="modern-table">
-          <thead>
-            <tr>
-              <th>Categoría</th>
-              <th>Alimento</th>
-              <th>Unidad</th>
-              <th>Máx</th>
-              <th>Mín</th>
-              <th>Actual</th>
-              <th>Estatus</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of inventario">
-              <td class="text-muted">{{ item.categoria }}</td>
-              <td class="fw-bold">{{ item.alimento }}</td>
-              <td class="text-muted">{{ item.unidad }}</td>
-              <td class="text-muted">{{ item.maxima }}</td>
-              <td class="text-muted">{{ item.minima }}</td>
-              <td class="fw-bold">{{ item.actual }}</td>
-              <td>
-                <span class="status-badge" [ngClass]="item.claseEstatus">
-                  {{ item.textoEstatus }}
-                </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    </div><!-- /db-main -->
+  </div><!-- /dashboard-view -->
 
-  </ion-content>
-</div>
+</div><!-- /app-root -->
