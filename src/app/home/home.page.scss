@@ -1,29 +1,27 @@
-/* =========================================
-   VARIABLES GLOBALES Y TEMA (DÍA / NOCHE)
-   ========================================= */
+// =========================================
+//   HOME PAGE — LOGÍSTIC SUPPLYING
+//   Estilo: Dark Neón / Paleta del Logo
+// =========================================
 
+// ── WRAPPER ──────────────────────────────
 .theme-wrapper {
-  /* Paleta Corporativa MEXCF */
-  --color-naranja: #FF8C00;
-  --color-coral: #FF7F50;
-  --color-calabaza: #FF7518;
-  --color-melon: #FFB07C;
-  
-  /* Semáforos de Estatus */
-  --status-verde: #00C853;
-  --status-ambar: #FFB300;
-  --status-rojo: #FF3D00;
+  --color-naranja:  var(--naranja);
+  --color-coral:    var(--naranja-suave);
+  --color-calabaza: var(--naranja);
+  --status-verde:   var(--verde-neon);
+  --status-ambar:   var(--naranja);
+  --status-rojo:    #FF4A4A;
 
-  /* VARIABLES MODO DÍA (Por defecto) */
-  --bg-app: #F4F7FA;
-  --bg-card: #FFFFFF;
-  --bg-input: #F8FAFC;
-  --text-main: #1E222B;
-  --text-muted: #8A94A6;
-  --border-color: #E2E8F0; /* Línea suave para el día */
-  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.04);
-  --header-bg: #FFFFFF;
-  --glow-opacity: 0.05; /* Resplandor casi invisible en día */
+  // Dark (default)
+  --bg-app:       #0A0E1A;
+  --bg-card:      #0F1525;
+  --bg-input:     #141929;
+  --text-main:    #C8D4F0;
+  --text-muted:   #4A5A7A;
+  --border-color: #1A2540;
+  --shadow-card:  0 8px 24px rgba(0,0,0,0.5);
+  --header-bg:    #0A0E1A;
+  --glow-opacity: 0.16;
 
   height: 100vh;
   display: flex;
@@ -33,96 +31,102 @@
   transition: background-color 0.4s ease, color 0.4s ease;
 }
 
-/* VARIABLES MODO NOCHE (OLED & Neón) */
-.theme-wrapper[data-theme="dark"] {
-  --bg-app: #0A0C10;
-  --bg-card: #12151A;
-  --bg-input: #1A1D24;
-  --text-main: #FFFFFF;
-  --text-muted: #A0AABF;
-  --border-color: #2A2F3A; /* Línea oscura y elegante */
-  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.4);
-  --header-bg: #0A0C10;
-  --glow-opacity: 0.15; /* Resplandor neón encendido en noche */
+// Modo claro
+.theme-wrapper[data-theme="light"] {
+  --bg-app:       #F0F4FF;
+  --bg-card:      #FFFFFF;
+  --bg-input:     #F5F8FF;
+  --text-main:    #1C3366;
+  --text-muted:   #6A7A9A;
+  --border-color: #D0D8F0;
+  --shadow-card:  0 4px 16px rgba(28,51,102,0.08);
+  --header-bg:    #FFFFFF;
+  --glow-opacity: 0.03;
 }
 
-/* =========================================
-   HEADER Y ALINEACIÓN PERFECTA (ANTI-APLASTAMIENTO)
-   ========================================= */
+// ── HEADER ───────────────────────────────
 ion-toolbar.custom-toolbar {
-  --background: var(--header-bg);
-  --border-width: 0; 
-  border-bottom: 1px solid var(--border-color); 
-  padding: 10px 0; 
+  --background:   var(--header-bg);
+  --border-width: 0;
+  border-bottom: 1px solid var(--border-color);
+  padding: 8px 0;
   transition: background 0.4s ease;
 }
 
-/* Usamos GRID para forzar el menú al centro exacto y evitar colisiones */
 .header-container {
   display: grid;
-  grid-template-columns: 1fr auto 1fr; /* Izquierda, Centro (Menú), Derecha */
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  padding: 0 30px;
-  gap: 20px;
+  padding: 0 24px;
+  gap: 16px;
 }
 
-.logo-section { 
-  display: flex; 
-  align-items: center; 
-  gap: 12px; 
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
-.header-logo { height: 40px; }
-.header-title { color: var(--text-main); font-size: 1.3rem; font-weight: 800; margin: 0; letter-spacing: -0.5px; }
 
-.theme-toggle-container { 
-  display: flex; 
-  justify-content: flex-end; /* Ancla el botón a la derecha */
+.header-logo { height: 36px; }
+
+.header-title {
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: .2px;
+
+  span { color: var(--verde-neon); }
 }
+
+.theme-toggle-container {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .theme-btn {
   --color: var(--text-main);
-  font-weight: bold;
+  font-weight: 600;
   background: var(--bg-input);
   border-radius: 20px;
   border: 1px solid var(--border-color);
-  height: 40px;
+  height: 36px;
+  font-size: 0.82rem;
+  transition: border-color 0.2s;
+  &:hover { border-color: var(--verde-neon); }
 }
 
-/* =========================================
-   MENÚ DE PESTAÑAS (ESTILO PÍLDORA)
-   ========================================= */
+// ── SEGMENTO ─────────────────────────────
 .modern-segment {
   --background: var(--bg-input);
   border: 1px solid var(--border-color);
   border-radius: 40px;
   padding: 4px;
-  min-height: 48px;
+  min-height: 44px;
   width: 100%;
-  min-width: 380px; /* Evita textos cortados */
-  max-width: 450px;
+  min-width: 360px;
+  max-width: 440px;
   margin: 0 auto;
 }
 
 ion-segment-button {
-  --color: var(--text-muted);
-  --color-checked: var(--text-main);
-  --indicator-color: var(--bg-card);
-  --indicator-box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  text-transform: none; 
-  font-size: 0.95rem;
-  --padding-start: 10px; 
-  --padding-end: 10px;
+  --color:               var(--text-muted);
+  --color-checked:       #FFFFFF;
+  --indicator-color:     var(--azul-marino);
+  --indicator-box-shadow: var(--glow-azul);
+  font-weight: 700;
+  letter-spacing: .5px;
+  text-transform: none;
+  font-size: 0.88rem;
+  --padding-start: 10px;
+  --padding-end:   10px;
 }
 
-/* Curvas perfectas en el indicador interno (El botón que se mueve) */
 ion-segment-button::part(indicator-background) {
   border-radius: 30px;
 }
 
-/* =========================================
-   ESTRUCTURA GENERAL DEL DASHBOARD
-   ========================================= */
+// ── CONTENIDO ────────────────────────────
 ion-content.custom-content {
   --background: var(--bg-app);
 }
@@ -130,134 +134,200 @@ ion-content.custom-content {
 .dashboard-layout {
   display: grid;
   grid-template-columns: 2.5fr 1fr;
-  gap: 30px; 
+  gap: 20px;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 30px 20px 60px 20px;
+  padding: 24px 18px 60px;
 
-  @media (max-width: 1024px) { 
-    grid-template-columns: 1fr; 
-  }
+  @media (max-width: 1024px) { grid-template-columns: 1fr; }
 }
 
 .dashboard-grid {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 30px 20px 60px 20px;
+  padding: 24px 18px 60px;
 }
 
-/* =========================================
-   TARJETAS CON EFECTO BACKGLOW (RESPLANDOR)
-   ========================================= */
+// ── TARJETAS ─────────────────────────────
 .modern-card {
-  position: relative; 
+  position: relative;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 24px;
-  padding: 30px; 
+  border-radius: 18px;
+  padding: 24px;
   box-shadow: var(--shadow-card);
-  transition: transform 0.3s ease;
+  transition: transform 0.25s ease, border-color 0.25s ease;
   z-index: 1;
 
-  /* Resplandor trasero difuminado (Se activa en la noche) */
   &::before {
     content: '';
     position: absolute;
-    top: 10px; left: 10px; right: 10px; bottom: 10px;
-    background: linear-gradient(135deg, var(--color-naranja), var(--color-coral));
-    filter: blur(25px); 
-    opacity: var(--glow-opacity); 
-    z-index: -1; 
+    inset: 8px;
+    background: radial-gradient(ellipse at 30% 50%, var(--verde-neon), var(--naranja));
+    filter: blur(30px);
+    opacity: var(--glow-opacity);
+    z-index: -1;
     border-radius: inherit;
     transition: opacity 0.3s ease;
   }
 
-  &:hover { transform: translateY(-4px); }
-  &:hover::before { opacity: calc(var(--glow-opacity) + 0.1); }
+  &:hover {
+    transform: translateY(-3px);
+    border-color: rgba(109,190,46,0.25);
+    &::before { opacity: calc(var(--glow-opacity) + 0.07); }
+  }
 }
 
-/* Tarjeta Hero (La de colores principales - Resumen) */
+// Hero card
 .hero-card {
-  background: linear-gradient(135deg, var(--color-naranja), var(--color-coral));
-  color: white;
+  background: linear-gradient(135deg, var(--azul-marino) 0%, #0D1A38 100%);
+  border: 1px solid rgba(109,190,46,0.2);
+  color: #fff;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
-  border: none;
-  overflow: hidden; 
-  
-  h2 { font-weight: 800; margin: 0 0 10px 0; font-size: 1.6rem; letter-spacing: -0.5px; }
-  p { margin: 0; opacity: 0.9; font-size: 1.05rem; }
-  
-  .hero-kpi h3 { font-size: 3.5rem; margin: 0; font-weight: 900; line-height: 1; text-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-  .hero-kpi span { font-weight: 600; opacity: 0.9; }
+  margin-bottom: 18px;
+  overflow: hidden;
 
-  &::before { display: none; } /* Quitamos el resplandor a esta tarjeta */
-}
+  h2 {
+    font-weight: 800;
+    margin: 0 0 6px;
+    font-size: 1.4rem;
+    color: #fff;
+  }
+  p { margin: 0; opacity: 0.75; font-size: 0.95rem; }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
+  .hero-kpi {
+    text-align: center;
+    h3 {
+      font-size: 3rem;
+      margin: 0;
+      font-weight: 900;
+      color: var(--verde-neon);
+      text-shadow: var(--glow-verde);
+    }
+    span { font-weight: 600; opacity: 0.8; font-size: 0.85rem; }
+  }
+
+  &::before { display: none; }
 }
 
 .card-title {
   color: var(--text-main);
-  font-size: 1.15rem;
-  font-weight: 800;
-  margin: 0;
-  letter-spacing: -0.3px;
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 18px;
+  letter-spacing: -.1px;
 }
 
-/* =========================================
-   BOTONES
-   ========================================= */
+// ── KPI CARDS ────────────────────────────
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 0;
+
+  @media (max-width: 900px) { grid-template-columns: repeat(2,1fr); }
+}
+
+.kpi-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 14px 16px;
+  border-top-width: 2px;
+
+  &.verde  { border-top-color: var(--verde-neon); }
+  &.naranja { border-top-color: var(--naranja); }
+  &.azul   { border-top-color: var(--azul-medio); }
+  &.rojo   { border-top-color: var(--status-rojo); }
+
+  .kpi-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .kpi-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    small { font-size: 11px; font-weight: 400; color: var(--text-muted); margin-left: 3px; }
+  }
+}
+
+// ── BOTONES ──────────────────────────────
 .primary-btn {
-  --background: var(--color-naranja);
-  --border-radius: 14px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  height: 50px;
+  --background:    var(--verde-neon);
+  --color:         #070A12;
+  --border-radius: 12px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  height: 46px;
+  margin-bottom: 10px;
+  box-shadow: var(--glow-verde);
+  transition: box-shadow 0.2s;
+  &:hover { box-shadow: 0 0 28px rgba(109,190,46,0.55); }
 }
 
 .outline-btn {
-  --color: var(--color-naranja);
-  --border-color: var(--color-naranja);
-  --border-radius: 14px;
-  font-weight: 800;
-  height: 50px;
+  --color:         var(--verde-neon);
+  --border-color:  var(--verde-neon);
+  --border-radius: 12px;
+  font-weight: 700;
+  height: 46px;
+  border: 1px solid rgba(109,190,46,0.35);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  &:hover { border-color: var(--verde-neon); box-shadow: var(--glow-verde); }
 }
 
-/* =========================================
-   ELEMENTOS DE LISTA (SIDEBAR ALERTAS)
-   ========================================= */
-.alert-item {
+// ── SEMÁFORO SIDEBAR ─────────────────────
+.semaforo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.semaforo-row {
   display: flex;
   align-items: center;
-  padding: 18px 0;
-  border-bottom: 1px dashed var(--border-color); 
-  
-  &:last-child { border-bottom: none; padding-bottom: 0; }
-  &:first-child { padding-top: 0; }
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-color);
+  &:last-child { border-bottom: none; }
 }
 
-.alert-icon {
-  width: 45px; height: 45px;
-  border-radius: 12px;
-  display: flex; justify-content: center; align-items: center;
-  font-weight: 900; font-size: 1.4rem;
-  margin-right: 18px;
+.semaforo-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+
+  &.ok   { background: var(--verde-neon); box-shadow: 0 0 6px var(--verde-neon); }
+  &.warn { background: var(--naranja);    box-shadow: 0 0 6px var(--naranja); }
+  &.err  { background: var(--status-rojo); box-shadow: 0 0 6px var(--status-rojo); }
 }
 
-.alert-info h4 { color: var(--text-main); margin: 0 0 6px 0; font-weight: 800; font-size: 1rem; }
-.alert-info p { color: var(--text-muted); margin: 0; font-size: 0.85rem; font-weight: 500; }
-.alert-value { margin-left: auto; font-weight: 900; font-size: 1.4rem; }
+.semaforo-nombre {
+  flex: 1;
+  font-size: 12px;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-/* =========================================
-   TABLA CORREGIDA (MÁS ESPACIO Y LIMPIEZA)
-   ========================================= */
+.semaforo-valor {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+// ── TABLA INVENTARIO ─────────────────────
 .modern-table {
   width: 100%;
   border-collapse: collapse;
@@ -265,77 +335,100 @@ ion-content.custom-content {
 
 .modern-table th {
   color: var(--text-muted);
-  padding: 18px 24px; 
-  font-size: 0.85rem;
-  font-weight: 800;
+  padding: 12px 18px;
+  font-size: 0.75rem;
+  font-weight: 700;
   text-transform: uppercase;
-  border-bottom: 2px solid var(--border-color); 
+  letter-spacing: .8px;
+  border-bottom: 1px solid var(--border-color);
+  text-align: left;
 }
 
 .modern-table td {
-  padding: 20px 24px; 
+  padding: 14px 18px;
   color: var(--text-main);
   border-bottom: 1px solid var(--border-color);
-  font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background 0.15s;
 }
 
-.modern-table tr:last-child td {
-  border-bottom: none;
-}
+.modern-table tr:hover td { background: var(--bg-input); }
+.modern-table tr:last-child td { border-bottom: none; }
 
-.fw-bold { font-weight: 800; }
-.text-muted { color: var(--text-muted); font-weight: 500; }
+.fw-bold    { font-weight: 700; color: #fff; }
+.text-muted { color: var(--text-muted); font-weight: 400; }
 
+// Badges estatus
 .status-badge {
-  padding: 8px 14px;
-  border-radius: 10px;
-  font-size: 0.85rem;
-  font-weight: 800;
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+  border: 1px solid transparent;
+
+  &.ok {
+    background: rgba(109,190,46,0.1);
+    color: var(--verde-neon);
+    border-color: rgba(109,190,46,0.2);
+  }
+  &.warn {
+    background: rgba(244,121,32,0.1);
+    color: var(--naranja);
+    border-color: rgba(244,121,32,0.2);
+  }
+  &.err {
+    background: rgba(255,74,74,0.1);
+    color: var(--status-rojo);
+    border-color: rgba(255,74,74,0.2);
+  }
 }
 
-/* =========================================
-   FORMULARIOS (GESTIÓN)
-   ========================================= */
+// ── FORMULARIOS ──────────────────────────
 ion-item.modern-input {
   --background: var(--bg-input);
-  --color: var(--text-main);
+  --color:      var(--text-main);
   border: 1px solid var(--border-color);
-  border-radius: 14px;
-  margin-bottom: 20px; 
+  border-radius: 12px;
+  margin-bottom: 14px;
   padding: 4px 0;
+  transition: border-color 0.2s;
+
+  &:focus-within {
+    border-color: rgba(109,190,46,0.45);
+    box-shadow: 0 0 0 2px rgba(109,190,46,0.08);
+  }
 }
 
-.fade-in { animation: fadeIn 0.4s ease-out; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-
-/* =========================================
-   SPLASH SCREEN DE INICIO
-   ========================================= */
-.splash-screen {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background-color: #000; z-index: 99999;
-  display: flex; justify-content: center; align-items: center;
-  transition: opacity 0.4s ease-out;
+// ── TOAST ────────────────────────────────
+.custom-toast {
+  --border-radius: 12px;
+  --box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  font-weight: 600;
 }
-.splash-screen.oculto { opacity: 0; pointer-events: none; }
-.logo-creativo { width: 280px; position: relative; z-index: 3; }
 
-/* =========================================
-   RESPONSIVE (MÓVILES)
-   ========================================= */
+// ── ANIMACIÓN ENTRADA ────────────────────
+.fade-in {
+  animation: fadeIn 0.35s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ── RESPONSIVE ───────────────────────────
 @media (max-width: 850px) {
   .header-container {
     display: flex;
     flex-direction: column;
-    padding: 15px;
-    gap: 15px;
+    padding: 12px;
+    gap: 10px;
   }
-  .modern-segment {
-    min-width: 100%;
-  }
-  .theme-toggle-container {
-    justify-content: center;
-    width: 100%;
-  }
+  .modern-segment { min-width: 100%; }
+  .theme-toggle-container { justify-content: center; width: 100%; }
+  .hero-card { flex-direction: column; gap: 14px; text-align: center; }
+  .kpi-grid  { grid-template-columns: repeat(2,1fr); }
 }

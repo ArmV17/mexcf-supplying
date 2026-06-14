@@ -1,93 +1,242 @@
+// =========================================
+//   VARIABLES GLOBALES — LOGÍSTIC SUPPLYING
+//   Paleta extraída del logo oficial
+// =========================================
+
 :root {
-  /* Fondo general oscuro */
-  --ion-background-color: #121212;
-  --ion-text-color: #ffffff;
+  // --- Paleta del Logo ---
+  --azul-marino:    #1C3366;
+  --azul-medio:     #2A4A99;
+  --verde-neon:     #6DBE2E;
+  --verde-oscuro:   #3D7A10;
+  --naranja:        #F47920;
+  --naranja-suave:  #F5A05A;
 
-  /* Paleta MEXCF */
-  --color-naranja: #FF8C00;
-  --color-calabaza: #FF7518;
-  --color-melon: #FFB07C;
-  --color-coral: #FF7F50;
+  // --- Fondos Dark (OLED Neón) ---
+  --bg-app:         #0A0E1A;
+  --bg-card:        #0F1525;
+  --bg-input:       #141929;
+  --bg-hover:       #1A2035;
 
-  /* Colores de Estatus */
-  --status-verde: #28a745;
-  --status-ambar: #ffc107;
-  --status-rojo: #dc3545;
+  // --- Texto ---
+  --text-main:      #C8D4F0;
+  --text-white:     #FFFFFF;
+  --text-muted:     #4A5A7A;
+
+  // --- Bordes ---
+  --border-color:   #1A2540;
+  --border-accent:  rgba(42, 74, 153, 0.2);
+
+  // --- Semáforos ---
+  --status-verde:   #6DBE2E;
+  --status-ambar:   #F47920;
+  --status-rojo:    #FF4A4A;
+
+  // --- Glow / Sombras ---
+  --shadow-card:    0 8px 24px rgba(0, 0, 0, 0.5);
+  --glow-verde:     0 0 20px rgba(109, 190, 46, 0.3);
+  --glow-naranja:   0 0 20px rgba(244, 121, 32, 0.3);
+  --glow-azul:      0 0 20px rgba(28, 51, 102, 0.5);
+  --glow-opacity:   0.0;
+
+  // --- Ion Overrides ---
+  --ion-background-color: #0A0E1A;
+  --ion-text-color:       #C8D4F0;
+  --ion-color-primary:    #6DBE2E;
 }
 
-/* =========================================
-   SPLASH SCREEN CREATIVO (CORREGIDO)
-   ========================================= */
+
+// =========================================
+//   SPLASH SCREEN — LOGÍSTIC SUPPLYING
+//   Estilo neón oscuro con partículas
+// =========================================
 
 .splash-screen {
   position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background-color: #0d0f12; /* Fondo completamente oscuro */
+  inset: 0;
+  background: #070A12;
   z-index: 99999;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  transition: opacity 0.4s ease-out, visibility 0.4s ease-out;
+  transition: opacity 0.6s ease-out, visibility 0.6s ease-out;
 }
-
 .splash-screen.oculto {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
 }
 
-/* EFECTO 1 CORREGIDO: Orbe de luz radial inmenso y suave (Cero cuadros) */
-.splash-background {
+// ─ Fondo radial doble (verde + naranja del logo) ─
+.splash-bg {
   position: absolute;
-  width: 150vw; /* Más grande que la pantalla */
-  height: 150vw;
-  /* Degradado circular perfecto que se difumina hacia transparente */
-  background: radial-gradient(circle, rgba(255, 117, 24, 0.15) 0%, rgba(13, 15, 18, 0) 60%);
-  animation: pulsoFondo 3s ease-in-out infinite alternate;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 50%,
+      rgba(109, 190, 46, 0.10) 0%,
+      rgba(244, 121, 32, 0.06) 45%,
+      transparent 70%);
+  animation: splashBgPulse 2.5s ease-in-out infinite alternate;
+}
+@keyframes splashBgPulse {
+  0%   { opacity: 0.6; transform: scale(0.95); }
+  100% { opacity: 1;   transform: scale(1.05); }
 }
 
-.logo-wrapper {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* EFECTO 2: Anillo de impacto moderno */
-.glow-ring {
+// ─ Anillo exterior giratorio ─
+.splash-ring-outer {
   position: absolute;
-  width: 150px;
-  height: 150px;
+  width: 220px;
+  height: 220px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 127, 80, 0.4);
-  box-shadow: 0 0 40px rgba(255, 127, 80, 0.6);
-  animation: pulsarAnillo 1.2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+  border: 1.5px solid rgba(109, 190, 46, 0.25);
+  border-top-color: #6DBE2E;
   opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  animation: none;
+
+  &.visible {
+    opacity: 1;
+    transform: scale(1);
+    animation: spinRing 3s linear infinite;
+  }
+}
+@keyframes spinRing {
+  to { transform: scale(1) rotate(360deg); }
 }
 
-/* EFECTO 3: Entrada limpia del logo */
-.logo-creativo {
-  width: 280px;
+// ─ Anillo interior pulsante ─
+.splash-ring-inner {
+  position: absolute;
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  border: 1px solid rgba(244, 121, 32, 0.3);
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
+  animation: none;
+
+  &.visible {
+    opacity: 1;
+    transform: scale(1);
+    animation: pulseInner 1.8s ease-in-out infinite alternate;
+  }
+}
+@keyframes pulseInner {
+  0%   { box-shadow: 0 0 0   rgba(244,121,32,0);    border-color: rgba(244,121,32,0.3); }
+  100% { box-shadow: 0 0 30px rgba(244,121,32,0.35); border-color: rgba(244,121,32,0.7); }
+}
+
+// ─ Partículas flotantes ─
+.splash-particles { position: absolute; inset: 0; pointer-events: none; }
+.splash-particles .p {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.splash-particles.visible .p { opacity: 1; }
+
+.p1 { width:4px; height:4px; background:#6DBE2E; top:20%; left:15%; animation: floatP 3.2s ease-in-out infinite; }
+.p2 { width:3px; height:3px; background:#F47920; top:30%; right:20%; animation: floatP 2.8s ease-in-out 0.4s infinite; }
+.p3 { width:5px; height:5px; background:#6DBE2E; bottom:25%; left:22%; animation: floatP 3.6s ease-in-out 0.8s infinite; }
+.p4 { width:3px; height:3px; background:#F47920; bottom:35%; right:18%; animation: floatP 2.5s ease-in-out 0.2s infinite; }
+.p5 { width:4px; height:4px; background:#2A4A99; top:60%; left:10%; animation: floatP 3.0s ease-in-out 1.0s infinite; }
+.p6 { width:3px; height:3px; background:#6DBE2E; top:15%; right:12%; animation: floatP 2.9s ease-in-out 0.6s infinite; }
+
+@keyframes floatP {
+  0%, 100% { transform: translateY(0) scale(1);    opacity: 0.6; }
+  50%       { transform: translateY(-18px) scale(1.4); opacity: 1; }
+}
+
+// ─ Contenido central ─
+.splash-content {
   position: relative;
-  z-index: 3;
-  animation: entradaImpacto 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
 
-/* --- NUEVOS MOTORES DE ANIMACIÓN --- */
+.splash-logo-wrap {
+  opacity: 0;
+  transform: scale(0.3) translateY(20px);
+  transition: opacity 0.6s cubic-bezier(0.175,0.885,0.32,1.275),
+              transform 0.6s cubic-bezier(0.175,0.885,0.32,1.275);
 
-@keyframes pulsoFondo {
-  0% { transform: scale(0.8); opacity: 0.6; }
-  100% { transform: scale(1.2); opacity: 1; }
+  &.visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+.splash-logo {
+  width: 110px;
+  height: 110px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 20px rgba(109,190,46,0.5));
 }
 
-@keyframes pulsarAnillo {
-  0% { transform: scale(0.6); opacity: 1; border-width: 4px; }
-  100% { transform: scale(2.8); opacity: 0; border-width: 1px; }
+.splash-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s ease 0.1s, transform 0.5s ease 0.1s;
+
+  &.visible { opacity: 1; transform: translateY(0); }
+}
+.splash-brand {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: 4px;
+}
+.splash-sub {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #6DBE2E;
+  letter-spacing: 6px;
+  text-shadow: 0 0 12px rgba(109,190,46,0.7);
+}
+.splash-tagline {
+  font-size: 0.75rem;
+  color: #4A5A7A;
+  letter-spacing: 1.5px;
+  font-style: italic;
+  margin-top: 4px;
 }
 
-@keyframes entradaImpacto {
-  0% { transform: scale(0.5); opacity: 0; filter: blur(10px); }
-  100% { transform: scale(1); opacity: 1; filter: blur(0); }
+// ─ Barra de carga inferior ─
+.splash-loader {
+  position: absolute;
+  bottom: 40px;
+  width: 160px;
+  height: 2px;
+  background: rgba(109,190,46,0.15);
+  border-radius: 2px;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.4s ease 0.3s;
+
+  &.visible { opacity: 1; }
+}
+.splash-loader-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #6DBE2E, #F47920);
+  border-radius: 2px;
+  animation: loadBar 1.8s ease-in-out forwards;
+  box-shadow: 0 0 10px rgba(109,190,46,0.8);
+}
+@keyframes loadBar {
+  0%   { width: 0%; }
+  60%  { width: 75%; }
+  100% { width: 100%; }
 }
