@@ -362,53 +362,6 @@
       <!-- ── GESTIÓN ── -->
       <div *ngIf="seccionActual === 'gestion'" class="db-content fade-in">
 
-        <!-- IMPORTAR EXCEL -->
-        <div class="db-card db-import-card">
-          <div class="db-card-title" style="color:var(--verde-neon)">📥 Importar Inventario desde Excel</div>
-          <p class="db-import-hint">Sube el archivo Excel con el formato de inventario (igual al que genera la app).</p>
-
-          <div class="db-import-row">
-            <label class="db-file-label">
-              <input type="file" accept=".xlsx,.xls" (change)="onArchivoSeleccionado($event)" class="db-file-input">
-              <span class="db-file-btn">📂 Seleccionar Excel</span>
-              <span class="db-file-name">{{ archivoExcel ? archivoExcel.name : 'Ningún archivo seleccionado' }}</span>
-            </label>
-            <button class="db-btn-primary db-btn-inline"
-              [disabled]="!importPreview.length || importando"
-              (click)="importarExcelAFirestore()">
-              {{ importando ? 'Importando...' : 'Subir a BD' }}
-            </button>
-          </div>
-
-          <!-- Preview de filas a importar -->
-          <div *ngIf="importPreview.length" class="db-import-preview">
-            <div class="db-import-preview-header">
-              <span>Vista previa — {{ importPreview.length }} alimentos detectados</span>
-            </div>
-            <div class="db-import-scroll">
-              <table class="db-table">
-                <thead>
-                  <tr>
-                    <th>CATEGORÍA</th><th>ALIMENTO</th><th>UNIDAD</th>
-                    <th>MÁX</th><th>MÍN</th><th>ACTUAL</th><th>PORCIÓN</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let r of importPreview">
-                    <td class="td-muted">{{ r.categoria }}</td>
-                    <td class="td-bold">{{ r.alimento }}</td>
-                    <td class="td-muted">{{ r.unidad }}</td>
-                    <td class="td-muted">{{ r.maxima }} <span class="td-unit">{{ r.unidad }}</span></td>
-                    <td class="td-muted">{{ r.minima }} <span class="td-unit">{{ r.unidad }}</span></td>
-                    <td class="td-bold">{{ r.actual }} <span class="td-unit">{{ r.unidad }}</span></td>
-                    <td class="td-muted">{{ r.porcion }} <span class="td-unit">{{ r.unidad }}</span></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
         <!-- Registrar Consumo -->
         <div class="db-card db-form-card">
           <div class="db-card-title" style="color:var(--verde-neon)">Registrar Consumo</div>
