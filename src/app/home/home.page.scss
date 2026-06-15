@@ -12,15 +12,15 @@
   --naranja:    #F47920;
   --rojo:       #FF4A4A;
 
-  // Dashboard dark (default)
-  --bg:         #0A0E1A;
-  --bg2:        #0F1525;
-  --bg3:        #141929;
-  --border:     #1A2540;
-  --text:       #C8D4F0;
-  --muted:      #4A5A7A;
-  --glow:       0.14;
-  --shadow:     0 8px 24px rgba(0,0,0,0.5);
+  // MODO CLARO (default para dashboard)
+  --bg:         #F0F4F8;
+  --bg2:        #FFFFFF;
+  --bg3:        #F5F7FA;
+  --border:     #E0E8F0;
+  --text:       #1C3366;
+  --muted:      #7A8BA8;
+  --glow:       0.03;
+  --shadow:     0 4px 16px rgba(28,51,102,0.08);
 
   height: 100vh;
   overflow: hidden;
@@ -29,9 +29,10 @@
   background: var(--bg);
   color: var(--text);
   font-family: 'Segoe UI', system-ui, sans-serif;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
-// Modo claro (toggle)
+// MODO NOCHE
 .app-root.is-dark {
   --bg:     #0A0E1A;
   --bg2:    #0F1525;
@@ -40,6 +41,7 @@
   --text:   #C8D4F0;
   --muted:  #4A5A7A;
   --glow:   0.14;
+  --shadow: 0 8px 24px rgba(0,0,0,0.5);
 }
 
 
@@ -146,14 +148,35 @@
 
 
 // =========================================
-//   LANDING — IMAGEN 4
-//   Fondo claro, nav verde oscuro
+//   LANDING — MODO DÍA Y NOCHE
 // =========================================
 .landing-view {
   height: 100vh;
   overflow-y: auto;
   background: #F0F4EB;
   color: #1C3366;
+  transition: background 0.4s ease, color 0.4s ease;
+
+  // ── MODO NOCHE ──
+  &.landing-dark {
+    background: #0A0E1A;
+    color: #C8D4F0;
+
+    .hero-left       { background: #0F1525; }
+    .hero-brand-name { color: #C8D4F0; }
+    .hero-brand-tag  { color: #4A5A7A; }
+    .hero-headline   { color: #fff; }
+    .hero-accent     { color: #6DBE2E; }
+    .hero-desc       { color: #8A9AB8; }
+    .hfeat           { background: #141929; border-color: #1A2540; }
+    .hfeat span      { color: #8A9AB8; }
+    .landing-stats   { background: #0F1525; border-top: 1px solid #1A2540; }
+    .lstat           { border-right-color: #1A2540; }
+    .lstat p         { color: #C8D4F0; }
+    .lstat small     { color: #4A5A7A; }
+    .landing-nav     { background: #070A12; border-bottom: 1px solid #1A2540; }
+    .lnav-theme-btn  { background: #1A2540; border-color: #2A3A5A; color: #C8D4F0; }
+  }
 }
 
 // Nav landing
@@ -161,6 +184,7 @@
   background: #1B3A2D;
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 2rem; height: 58px; position: sticky; top:0; z-index:10;
+  transition: background 0.4s ease;
 }
 .lnav-brand { display:flex; align-items:center; gap:10px; }
 .lnav-logo  { height:34px; }
@@ -169,30 +193,21 @@
   strong { color:#6DBE2E; font-weight:700; }
   small  { display:block; font-size:10px; color:#9DB8A8; font-weight:400; }
 }
-.lnav-links {
-  display:flex; gap:0; list-style:none;
-  a { color:#C8DDD2; font-size:11px; text-decoration:none; letter-spacing:1px;
-      padding:0 14px; height:58px; display:flex; align-items:center;
-      border-bottom:2px solid transparent; transition:all .2s;
-      &.active { color:#6DBE2E; border-bottom-color:#6DBE2E; }
-      &:hover  { color:#fff; } }
-}
-.lnav-right { display:flex; align-items:center; gap:12px; }
-.lnav-notif { position:relative; cursor:pointer; font-size:18px; color:#C8DDD2; }
-.lnav-badge {
-  position:absolute; top:-4px; right:-4px;
-  background:#F47920; color:#fff; font-size:9px;
-  width:15px; height:15px; border-radius:50%;
-  display:flex; align-items:center; justify-content:center; font-weight:600;
-}
-.lnav-user { display:flex; align-items:center; gap:8px; cursor:pointer; }
-.lnav-user-info { text-align:right; font-size:11px; color:#fff; line-height:1.3;
-  strong { display:block; } small { color:#9DB8A8; } }
-.lnav-avatar {
-  width:30px; height:30px; border-radius:50%;
-  background:#1C3366; border:1.5px solid #6DBE2E;
-  display:flex; align-items:center; justify-content:center;
-  font-size:11px; font-weight:600; color:#6DBE2E;
+
+// Botón toggle en landing
+.lnav-theme-btn {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  padding: 7px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  letter-spacing: .3px;
+  transition: background 0.2s, border-color 0.2s;
+  &:hover { background: rgba(109,190,46,0.2); border-color: #6DBE2E; }
 }
 
 // Hero
@@ -202,12 +217,13 @@
   padding: 3rem 3rem 2rem;
   display:flex; flex-direction:column; justify-content:center;
   background:#ffffff;
+  transition: background 0.4s ease;
 }
 .hero-logo-area { display:flex; align-items:center; gap:16px; margin-bottom:1.8rem; }
 .hero-logo-img  { height:90px; object-fit:contain; }
-.hero-brand-name{ font-size:22px; font-weight:800; color:#1C3366; letter-spacing:2px; }
+.hero-brand-name{ font-size:22px; font-weight:800; color:#1C3366; letter-spacing:2px; transition: color 0.4s; }
 .hero-brand-sub { font-size:11px; color:#F47920; letter-spacing:3px; font-weight:600; margin-top:2px; }
-.hero-brand-tag { font-size:10px; color:#6A8A75; letter-spacing:1.5px; font-style:italic; margin-top:3px; }
+.hero-brand-tag { font-size:10px; color:#6A8A75; letter-spacing:1.5px; font-style:italic; margin-top:3px; transition: color 0.4s; }
 
 .hero-headline {
   font-size:30px; font-weight:800; color:#1B3A2D; line-height:1.15; margin-bottom:.75rem;
@@ -515,27 +531,35 @@
   to   { opacity:1; transform:translateY(0); }
 }
 
-// ── NUEVOS ESTILOS GRÁFICAS ──────────────
-.db-chart-top {
+// ── NUEVO LAYOUT GRÁFICAS ────────────────
+// Donut izquierda (20%) + área derecha (80%)
+.db-chart-layout {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 200px 1fr;
   gap: 16px;
-  margin-bottom: 16px;
+  align-items: flex-start;
+  flex: 1;
+  min-height: 0;
 }
 
-.db-donut-wrap {
+// Donut compacto
+.db-donut-compact {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  padding-top: 8px;
 }
 
-.db-donut-legend {
+// Leyenda debajo del donut
+.db-donut-legend-compact {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 6px;
   width: 100%;
+  padding: 0 4px;
 }
+
 .db-leg-row {
   display: flex;
   align-items: center;
@@ -543,44 +567,157 @@
   font-size: 11px;
 }
 .db-leg-dot  { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
-.db-leg-name { flex: 1; color: var(--muted); }
-.db-leg-val  { color: #fff; font-weight: 600; }
+.db-leg-name { flex: 1; color: var(--muted); font-size: 11px; }
+.db-leg-val  { color: #fff; font-weight: 700; font-size: 11px; }
 
-// Mini KPIs del lado derecho del donut
-.db-mini-kpis {
+// Área grande — ocupa todo el espacio
+.db-area-wrap {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  justify-content: center;
-}
-.db-mini-kpi {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px 14px;
-  border-left-width: 3px;
-
-  &.verde  { border-left-color: #6DBE2E; }
-  &.naranja { border-left-color: #F47920; }
-  &.rojo   { border-left-color: #FF4A4A; }
-}
-.db-mini-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 4px; }
-.db-mini-val   { font-size: 24px; font-weight: 700; color: #fff; letter-spacing: -.5px; }
-.db-mini-delta { font-size: 10px; margin-top: 3px;
-  &.up   { color: #6DBE2E; }
-  &.warn { color: #F47920; }
-  &.err  { color: #FF4A4A; }
+  min-width: 0;
+  flex: 1;
 }
 
-// Barra de área (Total Profit style)
-.db-bar-wrap { }
 .db-bar-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
-.db-bar-title { font-size: 12px; color: var(--muted); }
+.db-bar-title { font-size: 11px; color: var(--muted); letter-spacing: .3px; }
+
+// Forzar altura completa en ApexCharts
+.db-area-wrap apx-chart { display: block; width: 100%; }
+.db-area-wrap .apexcharts-canvas { height: 380px !important; }
+// =========================================
+//   OVERLAY DE TRANSICIÓN LANDING → APP
+// =========================================
+.transition-overlay {
+  position: fixed;
+  inset: 0;
+  background: #070A12;
+  z-index: 99998;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+
+  &.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+  }
+}
+
+.transition-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  animation: transLogoIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.transition-logo-img {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 24px rgba(109, 190, 46, 0.6));
+  animation: transLogoPulse 0.8s ease-in-out infinite alternate;
+}
+
+.transition-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.transition-brand {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 4px;
+}
+
+.transition-sub {
+  font-size: 0.8rem;
+  color: #6DBE2E;
+  letter-spacing: 2px;
+  animation: transTextBlink 0.9s ease-in-out infinite alternate;
+}
+
+.transition-bar-wrap {
+  width: 200px;
+  height: 3px;
+  background: rgba(109, 190, 46, 0.15);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.transition-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #6DBE2E, #F47920);
+  border-radius: 3px;
+  box-shadow: 0 0 12px rgba(109, 190, 46, 0.8);
+
+  &.run {
+    animation: transBar 0.85s ease-in-out forwards;
+  }
+}
+
+@keyframes transLogoIn {
+  from { transform: scale(0.5) translateY(20px); opacity: 0; }
+  to   { transform: scale(1) translateY(0);      opacity: 1; }
+}
+@keyframes transLogoPulse {
+  from { filter: drop-shadow(0 0 12px rgba(109,190,46,0.4)); }
+  to   { filter: drop-shadow(0 0 32px rgba(109,190,46,0.9)); }
+}
+@keyframes transTextBlink {
+  from { opacity: 0.5; letter-spacing: 2px; }
+  to   { opacity: 1;   letter-spacing: 3px; }
+}
+@keyframes transBar {
+  0%   { width: 0%; }
+  70%  { width: 85%; }
+  100% { width: 100%; }
+}
+
+// Animación de entrada al dashboard
+.dashboard-view.dashboard-enter {
+  animation: dashEnter 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes dashEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(10px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+
+// ── GRÁFICA MÁS ALTA ─────────────────────
+// Fuerza al contenedor de ApexCharts a usar toda la altura disponible
+.db-bar-wrap {
+  .apexcharts-canvas { height: 320px !important; }
+}
+
+// Asegurar que el área de la gráfica se vea completa
+apx-chart {
+  display: block;
+  width: 100%;
+}
 
 // ── UNIDADES EN TABLA ────────────────────
 .td-unit {
@@ -588,16 +725,4 @@
   color: var(--muted);
   font-weight: 400;
   margin-left: 2px;
-}
-
-.td-unit-badge {
-  color: var(--muted);
-  font-size: 11px;
-  font-weight: 600;
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 5px;
-  padding: 2px 8px;
-  display: inline-block;
-  letter-spacing: .3px;
 }

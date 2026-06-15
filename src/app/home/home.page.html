@@ -1,27 +1,17 @@
 <!-- =============================================
-     SPLASH SCREEN — LOGÍSTIC SUPPLYING
+     OVERLAY DE TRANSICIÓN — VER INVENTARIO
+     (Solo se activa al pulsar el botón)
      ============================================= -->
-<div class="splash-screen" [class.oculto]="!mostrarSplash">
-  <div class="splash-bg"></div>
-  <div class="splash-particles" [class.visible]="splashFase >= 3">
-    <span class="p p1"></span><span class="p p2"></span>
-    <span class="p p3"></span><span class="p p4"></span>
-    <span class="p p5"></span><span class="p p6"></span>
-  </div>
-  <div class="splash-ring-outer" [class.visible]="splashFase >= 1"></div>
-  <div class="splash-ring-inner" [class.visible]="splashFase >= 2"></div>
-  <div class="splash-content">
-    <div class="splash-logo-wrap" [class.visible]="splashFase >= 1">
-      <img src="assets/icon/Logo.png" alt="Logístic Supplying" class="splash-logo">
-    </div>
-    <div class="splash-text" [class.visible]="splashFase >= 2">
-      <span class="splash-brand">LOGÍSTIC</span>
-      <span class="splash-sub">SUPPLYING</span>
-      <span class="splash-tagline">Calidad que se sirve todos los días</span>
+<div class="transition-overlay" [class.active]="transicionActiva">
+  <div class="transition-logo">
+    <img src="assets/icon/Logo.png" alt="Logo" class="transition-logo-img">
+    <div class="transition-text">
+      <span class="transition-brand">LOGÍSTIC</span>
+      <span class="transition-sub">Cargando inventario...</span>
     </div>
   </div>
-  <div class="splash-loader" [class.visible]="splashFase >= 2">
-    <div class="splash-loader-bar"></div>
+  <div class="transition-bar-wrap">
+    <div class="transition-bar" [class.run]="transicionActiva"></div>
   </div>
 </div>
 
@@ -34,10 +24,10 @@
        VISTA: LANDING / INICIO
        Visible cuando seccionActual === 'inicio'
        ══════════════════════════════════════ -->
-  <div *ngIf="seccionActual === 'inicio'" class="landing-view">
+  <div *ngIf="seccionActual === 'inicio'" class="landing-view" [class.landing-dark]="isDarkMode">
 
     <!-- NAV -->
-    <nav class="landing-nav">
+    <nav class="landing-nav" [class.light-nav]="!isDarkMode">
       <div class="lnav-brand">
         <img src="assets/icon/Logo.png" alt="Logo" class="lnav-logo">
         <div class="lnav-brand-text">
@@ -45,6 +35,9 @@
           <small>Control Inteligente de Inventarios</small>
         </div>
       </div>
+      <button class="lnav-theme-btn" (click)="toggleTheme()">
+        {{ isDarkMode ? '☀️ Modo Día' : '🌙 Modo Noche' }}
+      </button>
     </nav>
 
     <!-- HERO -->
@@ -91,7 +84,7 @@
         </div>
 
         <div class="hero-cta">
-          <button class="btn-hero-primary" (click)="seccionActual='resumen'">
+          <button class="btn-hero-primary" (click)="entrarAlApp()">
             📋 VER INVENTARIO
           </button>
         </div>
@@ -146,7 +139,7 @@
   <!-- ══════════════════════════════════════
        VISTA: DASHBOARD (Resumen/Gestión/Inventario)
        ══════════════════════════════════════ -->
-  <div *ngIf="seccionActual !== 'inicio'" class="dashboard-view">
+  <div *ngIf="seccionActual !== 'inicio'" class="dashboard-view" [class.dashboard-enter]="dashboardEntrando">
 
     <!-- SIDEBAR -->
     <aside class="db-sidebar">
@@ -195,14 +188,6 @@
           <button class="db-icon-btn" (click)="toggleTheme()" title="Cambiar tema">
             {{ isDarkMode ? '☀️' : '🌙' }}
           </button>
-          <button class="db-icon-btn">🔔</button>
-          <div class="db-user-pill">
-            <div class="db-user-info">
-              <strong>Administrador</strong>
-              <small>Comedor Newrest</small>
-            </div>
-            <div class="db-user-avatar">AD</div>
-          </div>
         </div>
       </div>
 
@@ -239,15 +224,15 @@
           <!-- Gráfica principal -->
           <div class="db-card db-card-chart">
             <div class="db-card-header">
-              <span class="db-card-title">Sales Overview</span>
-              <span class="db-card-sub">Dinámica de Stock</span>
+              <span class="db-card-title">Resumen de Stock</span>
+              <span class="db-card-sub">Dinámica de inventario en tiempo real</span>
             </div>
 
-            <!-- Fila superior: donut + mini KPIs -->
-            <div class="db-chart-top">
+            <!-- Layout: donut pequeño izquierda + área grande derecha -->
+            <div class="db-chart-layout">
 
-              <!-- Donut ApexCharts real -->
-              <div class="db-donut-wrap">
+              <!-- Donut compacto -->
+              <div class="db-donut-compact">
                 <apx-chart
                   [series]="donutOptions.series"
                   [chart]="donutOptions.chart"
@@ -258,7 +243,8 @@
                   [legend]="donutOptions.legend"
                   [stroke]="donutOptions.stroke">
                 </apx-chart>
-                <div class="db-donut-legend">
+                <!-- Leyenda compacta debajo del donut -->
+                <div class="db-donut-legend-compact">
                   <div class="db-leg-row">
                     <span class="db-leg-dot" style="background:#6DBE2E"></span>
                     <span class="db-leg-name">En Stock</span>
@@ -277,38 +263,24 @@
                 </div>
               </div>
 
-              <!-- Mini KPIs derechos -->
-              <div class="db-mini-kpis">
-                <div class="db-mini-kpi verde">
-                  <div class="db-mini-label">En Stock</div>
-                  <div class="db-mini-val">{{ countOk }}</div>
-                  <div class="db-mini-delta up">↑ Operando</div>
+              <!-- Gráfica de área — ocupa todo el espacio restante -->
+              <div class="db-area-wrap">
+                <div class="db-bar-header">
+                  <span class="db-bar-title">Dinámica de Stock por Alimento</span>
                 </div>
-                <div class="db-mini-kpi naranja">
-                  <div class="db-mini-label">Reabastecer</div>
-                  <div class="db-mini-val">{{ countWarn }}</div>
-                  <div class="db-mini-delta warn">⚠ Atención</div>
-                </div>
+                <apx-chart
+                  [series]="chartOptions.series"
+                  [chart]="chartOptions.chart"
+                  [xaxis]="chartOptions.xaxis"
+                  [colors]="chartOptions.colors"
+                  [plotOptions]="chartOptions.plotOptions"
+                  [dataLabels]="chartOptions.dataLabels"
+                  [grid]="chartOptions.grid"
+                  [stroke]="chartOptions.stroke"
+                  [fill]="chartOptions.fill">
+                </apx-chart>
               </div>
 
-            </div>
-
-            <!-- Gráfica de barras — igual a "Total Profit" de la imagen -->
-            <div class="db-bar-wrap">
-              <div class="db-bar-header">
-                <span class="db-bar-title">Dinámica de Stock por Alimento</span>
-              </div>
-              <apx-chart
-                [series]="chartOptions.series"
-                [chart]="chartOptions.chart"
-                [xaxis]="chartOptions.xaxis"
-                [colors]="chartOptions.colors"
-                [plotOptions]="chartOptions.plotOptions"
-                [dataLabels]="chartOptions.dataLabels"
-                [grid]="chartOptions.grid"
-                [stroke]="chartOptions.stroke"
-                [fill]="chartOptions.fill">
-              </apx-chart>
             </div>
           </div>
 
@@ -447,7 +419,6 @@
               <tr>
                 <th>CATEGORÍA</th>
                 <th>ALIMENTO</th>
-                <th>UNIDAD</th>
                 <th>MÁX</th>
                 <th>MÍN</th>
                 <th>ACTUAL</th>
@@ -458,7 +429,6 @@
               <tr *ngFor="let item of inventario">
                 <td class="td-muted">{{ item.categoria }}</td>
                 <td class="td-bold">{{ item.alimento }}</td>
-                <td class="td-unit-badge">{{ item.unidad }}</td>
                 <td class="td-muted">{{ item.maxima }} <span class="td-unit">{{ item.unidad }}</span></td>
                 <td class="td-muted">{{ item.minima }} <span class="td-unit">{{ item.unidad }}</span></td>
                 <td class="td-bold">{{ item.actual }} <span class="td-unit">{{ item.unidad }}</span></td>
