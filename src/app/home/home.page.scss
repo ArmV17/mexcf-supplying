@@ -726,3 +726,329 @@ apx-chart {
   font-weight: 400;
   margin-left: 2px;
 }
+
+// ── IMPORTAR EXCEL ────────────────────────
+.db-import-card { margin-bottom: 16px; }
+
+.db-import-hint {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0 0 14px;
+  line-height: 1.5;
+}
+
+.db-import-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.db-file-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  flex: 1;
+}
+
+.db-file-input { display: none; }
+
+.db-file-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--verde-neon);
+  padding: 9px 16px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color .2s;
+  &:hover { border-color: var(--verde-neon); }
+}
+
+.db-file-name {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+.db-import-preview { margin-top: 12px; }
+
+.db-import-preview-header {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  padding: 6px 10px;
+  background: var(--bg3);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.db-import-scroll {
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+// ── GRÁFICA DE TURNOS ────────────────────
+.db-periodo-card { margin-bottom: 12px; }
+
+.db-periodo-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.db-periodo-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 7px 20px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+
+  &:hover { border-color: var(--verde-neon); color: var(--text); }
+  &.active {
+    background: var(--verde-neon);
+    border-color: var(--verde-neon);
+    color: #070A12;
+    box-shadow: 0 0 12px rgba(109,190,46,.35);
+  }
+}
+
+.db-turno-leyenda {
+  display: flex;
+  align-items: center;
+  padding: 8px 4px;
+}
+
+// ── IMPORTAR EXCEL ────────────────────────
+.db-import-card { margin-bottom: 16px; }
+
+.db-import-hint {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 6px 0 14px;
+}
+
+.db-import-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.db-file-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  flex: 1;
+}
+
+.db-file-input { display: none; }
+
+.db-file-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--verde-neon);
+  padding: 9px 16px;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color .2s;
+  &:hover { border-color: var(--verde-neon); }
+}
+
+.db-file-name {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+.db-import-preview {
+  margin-top: 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.db-import-preview-header {
+  padding: 10px 16px;
+  background: var(--bg3);
+  font-size: 11px;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.db-import-scroll {
+  max-height: 260px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+// ── TURNOS / HISTORIAL ────────────────────
+.db-periodo-card { margin-bottom: 0; }
+
+.db-periodo-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.db-periodo-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 7px 20px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+
+  &:hover { border-color: var(--verde-neon); color: var(--text); }
+  &.active {
+    background: var(--verde-neon);
+    border-color: var(--verde-neon);
+    color: #0A0E1A;
+    box-shadow: 0 0 12px rgba(109,190,46,.35);
+  }
+}
+
+.db-turno-leyenda {
+  display: flex;
+  align-items: center;
+  margin: 12px 0 0;
+}
+
+// ── IMPORTAR EXCEL ────────────────────────
+.db-import-card { }
+
+.db-import-hint {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 6px 0 14px;
+  line-height: 1.5;
+}
+
+.db-import-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.db-file-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  flex: 1;
+  min-width: 0;
+}
+
+.db-file-input {
+  display: none;
+}
+
+.db-file-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--verde-neon);
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color .2s;
+  &:hover { border-color: var(--verde-neon); }
+}
+
+.db-file-name {
+  font-size: 11px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.db-import-preview {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.db-import-preview-header {
+  background: var(--bg3);
+  padding: 8px 16px;
+  font-size: 11px;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.db-import-scroll {
+  overflow-x: auto;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+// ── TURNOS ───────────────────────────────
+.db-periodo-card { }
+
+.db-periodo-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.db-periodo-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 7px 20px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+
+  &:hover { border-color: var(--verde-neon); color: var(--text); }
+
+  &.active {
+    background: var(--verde-neon);
+    border-color: var(--verde-neon);
+    color: #070A12;
+    box-shadow: 0 0 12px rgba(109,190,46,.35);
+  }
+}
+
+.db-turno-leyenda {
+  display: flex;
+  align-items: center;
+  margin-top: 12px;
+  padding: 0 4px;
+}
