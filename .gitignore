@@ -70,5 +70,5 @@ testem.log
 Thumbs.db
 
 # Archivos de entorno y credenciales
-environment.ts
-environment.prod.ts
+environment copy.ts
+environment.prod copy.ts
