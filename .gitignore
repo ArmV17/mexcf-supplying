@@ -68,7 +68,3 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
-
-# Archivos de entorno y credenciales
-environment copy.ts
-environment.prod copy.ts
