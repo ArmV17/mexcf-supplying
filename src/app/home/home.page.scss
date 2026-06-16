@@ -326,6 +326,7 @@
 .db-main {
   flex:1; display:flex; flex-direction:column; overflow:hidden;
   background:var(--bg);
+  min-height: 0;
 }
 
 // Topbar
@@ -363,6 +364,7 @@
 .db-content {
   flex:1; overflow-y:auto; padding:1.25rem;
   display:flex; flex-direction:column; gap:12px;
+  min-height: 0;   /* permite que flex-child haga scroll */
 }
 
 // KPI row
@@ -406,6 +408,31 @@
   }
   &:hover { border-color:rgba(109,190,46,.2); }
   & > * { position:relative; z-index:1; }
+}
+
+// Card especial para tabla — permite scroll vertical
+.db-card-table {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:14px; padding:0;
+  position:relative; overflow:visible;
+  flex: 1;
+
+  &::before {
+    content:''; position:absolute; inset:8px;
+    background:radial-gradient(ellipse at 30% 50%, #6DBE2E, #F47920);
+    filter:blur(30px); opacity:var(--glow); z-index:0;
+    border-radius:inherit; pointer-events:none;
+  }
+  & > * { position:relative; z-index:1; }
+}
+
+.db-table-scroll-wrap {
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: calc(100vh - 220px);  /* deja espacio para topbar + header del card */
+  border-radius: 0 0 14px 14px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
 }
 .db-card-chart { display:flex; flex-direction:column; }
 .db-card-header { margin-bottom:16px; }

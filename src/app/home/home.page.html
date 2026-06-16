@@ -450,40 +450,42 @@
       </div><!-- /gestion -->
 
       <!-- ── INVENTARIO ── -->
-      <div *ngIf="seccionActual === 'inventario'" class="db-content fade-in">
-        <div class="db-card" style="padding:0; overflow-x:auto;">
+      <div *ngIf="seccionActual === 'inventario'" class="db-content fade-in" style="overflow:hidden; padding:1.25rem; display:flex; flex-direction:column;">
+        <div class="db-card-table">
           <div class="db-table-header">
             <span class="db-card-title" style="padding:20px 24px; display:block">
               Inventario Completo
             </span>
             <span class="db-table-badge">{{ inventario.length }} registros</span>
           </div>
-          <table class="db-table">
-            <thead>
-              <tr>
-                <th>CATEGORÍA</th>
-                <th>ALIMENTO</th>
-                <th>MÁX</th>
-                <th>MÍN</th>
-                <th>ACTUAL</th>
-                <th>ESTATUS</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let item of inventario">
-                <td class="td-muted">{{ item.categoria }}</td>
-                <td class="td-bold">{{ item.alimento }}</td>
-                <td class="td-muted">{{ item.maxima }} <span class="td-unit">{{ item.unidad }}</span></td>
-                <td class="td-muted">{{ item.minima }} <span class="td-unit">{{ item.unidad }}</span></td>
-                <td class="td-bold">{{ item.actual }} <span class="td-unit">{{ item.unidad }}</span></td>
-                <td>
-                  <span class="db-status-badge" [ngClass]="item.claseEstatus">
-                    {{ item.textoEstatus }}
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="db-table-scroll-wrap">
+            <table class="db-table">
+              <thead>
+                <tr>
+                  <th>CATEGORÍA</th>
+                  <th>ALIMENTO</th>
+                  <th>MÁX</th>
+                  <th>MÍN</th>
+                  <th>ACTUAL</th>
+                  <th>ESTATUS</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of inventario">
+                  <td class="td-muted">{{ item.categoria }}</td>
+                  <td class="td-bold">{{ item.alimento }}</td>
+                  <td class="td-muted">{{ item.maxima }} <span class="td-unit">{{ item.unidad }}</span></td>
+                  <td class="td-muted">{{ item.minima }} <span class="td-unit">{{ item.unidad }}</span></td>
+                  <td class="td-bold">{{ item.actual }} <span class="td-unit">{{ item.unidad }}</span></td>
+                  <td>
+                    <span class="db-status-badge" [ngClass]="item.claseEstatus">
+                      {{ item.textoEstatus }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div><!-- /inventario -->
 
