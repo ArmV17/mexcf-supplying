@@ -1,7 +1,3 @@
-<!-- =============================================
-     OVERLAY DE TRANSICIÓN — VER INVENTARIO
-     (Solo se activa al pulsar el botón)
-     ============================================= -->
 <div class="transition-overlay" [class.active]="transicionActiva">
   <div class="transition-logo">
     <img src="assets/icon/Logo.png" alt="Logo" class="transition-logo-img">
@@ -15,18 +11,52 @@
   </div>
 </div>
 
-<!-- =============================================
-     APP PRINCIPAL
-     ============================================= -->
+<div class="modal-overlay" *ngIf="mostrarModalLogin">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>🔒 Control de Acceso</h3>
+      <p>Ingresa tus credenciales de administrador</p>
+    </div>
+    <div class="modal-body" style="margin-top: 16px;">
+      <div class="db-form-group">
+        <label>Usuario</label>
+        <input type="text" [(ngModel)]="loginUsuario" class="db-input" placeholder="Ej: admin" (keyup.enter)="verificarLogin()">
+      </div>
+      <div class="db-form-group" style="margin-top: 12px;">
+        <label>Contraseña</label>
+        <input type="password" [(ngModel)]="loginPassword" class="db-input" placeholder="••••••••" (keyup.enter)="verificarLogin()">
+      </div>
+    </div>
+    <div class="modal-footer" style="display: flex; gap: 10px; margin-top: 24px;">
+      <button class="db-btn-outline" (click)="cerrarLogin()">Cancelar</button>
+      <button class="db-btn-primary" style="margin-bottom: 0;" (click)="verificarLogin()">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="productoAEditar">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>✏️ Editar Categoría</h3>
+      <p>Producto: <strong>{{ productoAEditar.alimento }}</strong></p>
+    </div>
+    <div class="modal-body" style="margin-top: 16px;">
+      <div class="db-form-group">
+        <label>Nombre de la Categoría</label>
+        <input type="text" [(ngModel)]="nuevaCategoriaVal" class="db-input" (keyup.enter)="guardarCategoriaEditada()">
+      </div>
+    </div>
+    <div class="modal-footer" style="display: flex; gap: 10px; margin-top: 24px;">
+      <button class="db-btn-outline" (click)="cerrarEditarCategoria()">Cancelar</button>
+      <button class="db-btn-primary" style="margin-bottom: 0;" (click)="guardarCategoriaEditada()">Guardar</button>
+    </div>
+  </div>
+</div>
+
 <div class="app-root" [class.is-dark]="isDarkMode">
 
-  <!-- ══════════════════════════════════════
-       VISTA: LANDING / INICIO
-       Visible cuando seccionActual === 'inicio'
-       ══════════════════════════════════════ -->
   <div *ngIf="seccionActual === 'inicio'" class="landing-view" [class.landing-dark]="isDarkMode">
 
-    <!-- NAV -->
     <nav class="landing-nav" [class.light-nav]="!isDarkMode">
       <div class="lnav-brand">
         <img src="assets/icon/Logo.png" alt="Logo" class="lnav-logo">
@@ -40,10 +70,8 @@
       </button>
     </nav>
 
-    <!-- HERO -->
     <div class="landing-hero">
       <div class="hero-left">
-        <!-- Logo área -->
         <div class="hero-logo-area">
           <img src="assets/icon/Logo.png" alt="Logo" class="hero-logo-img">
           <div class="hero-brand">
@@ -84,20 +112,18 @@
         </div>
 
         <div class="hero-cta">
-          <button class="btn-hero-primary" (click)="entrarAlApp()">
-            📋 VER INVENTARIO
+          <button class="btn-hero-primary" (click)="abrirLogin()">
+            🔒 INGRESAR AL SISTEMA
           </button>
         </div>
       </div>
 
-      <!-- Imagen de fondo derecha -->
       <div class="hero-right">
         <img src="assets/icon/Foto1.jpeg" alt="Almacén" class="hero-bg-img"
              onerror="this.style.display='none'">
       </div>
     </div>
 
-    <!-- STATS BAR -->
     <div class="landing-stats">
       <div class="lstat">
         <span class="lstat-icon">🛡️</span>
@@ -129,15 +155,8 @@
       </div>
     </div>
 
-  </div><!-- /landing-view -->
+  </div><div *ngIf="seccionActual !== 'inicio'" class="dashboard-view" [class.dashboard-enter]="dashboardEntrando">
 
-
-  <!-- ══════════════════════════════════════
-       VISTA: DASHBOARD (Resumen/Gestión/Inventario)
-       ══════════════════════════════════════ -->
-  <div *ngIf="seccionActual !== 'inicio'" class="dashboard-view" [class.dashboard-enter]="dashboardEntrando">
-
-    <!-- SIDEBAR -->
     <aside class="db-sidebar">
       <div class="db-sidebar-logo">
         <img src="assets/icon/Logo.png" alt="Logo" class="db-logo-img">
@@ -174,10 +193,8 @@
       </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
     <div class="db-main">
 
-      <!-- TOPBAR -->
       <div class="db-topbar">
         <div class="db-breadcrumb">
           Dashboards /
@@ -191,10 +208,8 @@
         </div>
       </div>
 
-      <!-- ── RESUMEN ── -->
       <div *ngIf="seccionActual === 'resumen'" class="db-content fade-in">
 
-        <!-- KPI Row -->
         <div class="db-kpi-row">
           <div class="db-kpi verde">
             <div class="db-kpi-label">EN STOCK</div>
@@ -218,20 +233,16 @@
           </div>
         </div>
 
-        <!-- Charts + Panel derecho -->
         <div class="db-charts-layout">
 
-          <!-- Gráfica principal -->
           <div class="db-card db-card-chart">
             <div class="db-card-header">
               <span class="db-card-title">Resumen de Stock</span>
               <span class="db-card-sub">Dinámica de inventario en tiempo real</span>
             </div>
 
-            <!-- Layout: donut pequeño izquierda + área grande derecha -->
             <div class="db-chart-layout">
 
-              <!-- Donut compacto -->
               <div class="db-donut-compact">
                 <apx-chart
                   [series]="donutOptions.series"
@@ -243,7 +254,6 @@
                   [legend]="donutOptions.legend"
                   [stroke]="donutOptions.stroke">
                 </apx-chart>
-                <!-- Leyenda compacta debajo del donut -->
                 <div class="db-donut-legend-compact">
                   <div class="db-leg-row">
                     <span class="db-leg-dot" style="background:#6DBE2E"></span>
@@ -263,7 +273,6 @@
                 </div>
               </div>
 
-              <!-- Gráfica de área — ocupa todo el espacio restante -->
               <div class="db-area-wrap">
                 <div class="db-bar-header">
                   <span class="db-bar-title">Dinámica de Stock por Alimento</span>
@@ -284,10 +293,8 @@
             </div>
           </div>
 
-          <!-- Panel derecho -->
           <div class="db-side-panel">
 
-            <!-- Acciones rápidas -->
             <div class="db-card">
               <div class="db-card-title">Acciones Rápidas</div>
               <button class="db-btn-primary" (click)="cerrarTurno()">
@@ -298,7 +305,6 @@
               </button>
             </div>
 
-            <!-- Actividad / Semáforo -->
             <div class="db-card" style="margin-top:12px; flex:1; overflow:hidden;">
               <div class="db-card-title">Semáforo de Stock</div>
               <div class="db-activity-list">
@@ -313,12 +319,8 @@
           </div>
         </div>
 
-      </div><!-- /resumen -->
+      </div><div *ngIf="seccionActual === 'turnos'" class="db-content fade-in">
 
-      <!-- ── TURNOS ── -->
-      <div *ngIf="seccionActual === 'turnos'" class="db-content fade-in">
-
-        <!-- Selector de período -->
         <div class="db-card db-periodo-card">
           <div class="db-card-title">Consumo por Turno</div>
           <div class="db-periodo-row">
@@ -333,7 +335,6 @@
           </div>
         </div>
 
-        <!-- Leyenda -->
         <div class="db-turno-leyenda">
           <span class="db-leg-dot" style="background:#6DBE2E;display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px"></span>
           <span style="font-size:12px;color:var(--text);margin-right:16px">1er Turno</span>
@@ -341,7 +342,6 @@
           <span style="font-size:12px;color:var(--text)">2do Turno</span>
         </div>
 
-        <!-- Gráfica turnos -->
         <div class="db-card" style="margin-top:12px">
           <apx-chart
             [series]="chartTurnos.series"
@@ -357,12 +357,8 @@
           </apx-chart>
         </div>
 
-      </div><!-- /turnos -->
+      </div><div *ngIf="seccionActual === 'gestion'" class="db-content fade-in">
 
-      <!-- ── GESTIÓN ── -->
-      <div *ngIf="seccionActual === 'gestion'" class="db-content fade-in">
-
-        <!-- Registrar Consumo -->
         <div class="db-card db-form-card">
           <div class="db-card-title" style="color:var(--verde-neon)">Registrar Consumo</div>
           <div class="db-form-row">
@@ -393,7 +389,6 @@
           </div>
         </div>
 
-        <!-- Ingreso Stock + Nuevo Alimento -->
         <div class="db-two-col" style="margin-top:16px">
 
           <div class="db-card db-form-card">
@@ -447,10 +442,7 @@
           </div>
 
         </div>
-      </div><!-- /gestion -->
-
-      <!-- ── INVENTARIO ── -->
-      <div *ngIf="seccionActual === 'inventario'" class="db-content fade-in" style="overflow:hidden; padding:1.25rem; display:flex; flex-direction:column;">
+      </div><div *ngIf="seccionActual === 'inventario'" class="db-content fade-in" style="overflow:hidden; padding:1.25rem; display:flex; flex-direction:column;">
         <div class="db-card-table">
           <div class="db-table-header">
             <span class="db-card-title" style="padding:20px 24px; display:block">
@@ -472,7 +464,12 @@
               </thead>
               <tbody>
                 <tr *ngFor="let item of inventario">
-                  <td class="td-muted">{{ item.categoria }}</td>
+                  <td class="td-muted">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                      <span>{{ item.categoria }}</span>
+                      <button class="btn-tiny-edit" (click)="abrirEditarCategoria(item)" title="Editar categoría">✏️</button>
+                    </div>
+                  </td>
                   <td class="td-bold">{{ item.alimento }}</td>
                   <td class="td-muted">{{ item.maxima }} <span class="td-unit">{{ item.unidad }}</span></td>
                   <td class="td-muted">{{ item.minima }} <span class="td-unit">{{ item.unidad }}</span></td>
@@ -487,9 +484,4 @@
             </table>
           </div>
         </div>
-      </div><!-- /inventario -->
-
-    </div><!-- /db-main -->
-  </div><!-- /dashboard-view -->
-
-</div><!-- /app-root -->
+      </div></div></div></div>```

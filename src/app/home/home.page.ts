@@ -73,19 +73,32 @@ interface DonutOptions {
 })
 export class HomePage implements OnInit, OnDestroy {
 
-  // Transición
+  // ==========================================
+  // VARIABLES DE ESTADO Y TRANSICIÓN
+  // ==========================================
   transicionActiva  = false;
   dashboardEntrando = false;
+  seccionActual     = 'inicio';
+  isDarkMode        = false;
 
-  // Vista y tema
-  seccionActual = 'inicio';
-  isDarkMode    = false;
+  // ==========================================
+  // VARIABLES DE LOGIN Y EDICIÓN
+  // ==========================================
+  mostrarModalLogin = false;
+  loginUsuario      = '';
+  loginPassword     = '';
+  private readonly USER_ADMIN = 'admin';
+  private readonly PASS_ADMIN = '12345';
 
-  // Datos
+  productoAEditar: Alimento | null = null;
+  nuevaCategoriaVal = '';
+
+  // ==========================================
+  // DATOS Y FORMULARIOS
+  // ==========================================
   inventario: Alimento[] = [];
   private sub!: Subscription;
 
-  // Formularios
   formNuevo   = { categoria: '', alimento: '', unidad: 'kg', maxima: null as number|null, minima: null as number|null, porcion: null as number|null };
   formRestock = { idAlimento: '', cantidad: null as number|null };
   formConsumo = { idAlimento: '', turno: '1ro' as '1ro'|'2do', cantidad: null as number|null };
@@ -130,6 +143,56 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() { this.sub?.unsubscribe(); }
+
+  // ── MÉTODOS DE LOGIN ─────────────────────────────────────────
+  abrirLogin() {
+    this.mostrarModalLogin = true;
+  }
+
+  cerrarLogin() {
+    this.mostrarModalLogin = false;
+    this.loginUsuario      = '';
+    this.loginPassword     = '';
+  }
+
+  verificarLogin() {
+    if (this.loginUsuario.trim() === this.USER_ADMIN && this.loginPassword === this.PASS_ADMIN) {
+      this.cerrarLogin();
+      this.entrarAlApp();
+    } else {
+      this.toast('Usuario o contraseña incorrectos', 'danger');
+    }
+  }
+
+  // ── MÉTODOS DE EDICIÓN DE CATEGORÍA ──────────────────────────
+  abrirEditarCategoria(item: Alimento) {
+    this.productoAEditar   = item;
+    this.nuevaCategoriaVal = item.categoria;
+  }
+
+  cerrarEditarCategoria() {
+    this.productoAEditar   = null;
+    this.nuevaCategoriaVal = '';
+  }
+
+  async guardarCategoriaEditada() {
+    if (!this.productoAEditar?.id) return;
+    
+    const categoriaLimpia = this.nuevaCategoriaVal.trim();
+    if (!categoriaLimpia) {
+      return this.toast('La categoría no puede quedar vacía', 'warning');
+    }
+
+    try {
+      const docRef = doc(this.firestore, 'inventario', this.productoAEditar.id);
+      await updateDoc(docRef, { categoria: categoriaLimpia });
+      
+      this.toast('Categoría actualizada correctamente', 'success');
+      this.cerrarEditarCategoria();
+    } catch (error) {
+      this.toast('Error al actualizar la categoría', 'danger');
+    }
+  }
 
   // ── Transición animada ──────────────────────────────────────
   entrarAlApp() {
@@ -206,7 +269,6 @@ export class HomePage implements OnInit, OnDestroy {
       stroke: { width: 2, colors: ['#0A0E1A'] }
     };
 
-    // Gráfica de turnos (barras agrupadas T1=verde T2=naranja)
     this.chartTurnos = {
       series: [
         { name: '1er Turno', data: [] },
@@ -312,9 +374,9 @@ export class HomePage implements OnInit, OnDestroy {
       raw.forEach((fila: any[]) => {
         const cat  = String(fila[0] || '').trim();
         const ali  = String(fila[1] || '').trim();
-        if (!ali) return;                     // fila vacía
+        if (!ali) return;                     
 
-        if (cat) categoriaActual = cat;       // nueva categoría
+        if (cat) categoriaActual = cat;       
 
         const parseCantidad = (val: any): { cantidad: number; unidad: string } => {
           const s = String(val || '').trim();
@@ -334,7 +396,7 @@ export class HomePage implements OnInit, OnDestroy {
           unidad:    max.unidad || min.unidad || 'kg',
           maxima:    max.cantidad,
           minima:    min.cantidad,
-          actual:    actual.cantidad || max.cantidad,  // si no hay actual, usa máximo
+          actual:    actual.cantidad || max.cantidad,  
           porcion:   porcion.cantidad
         });
       });
@@ -361,7 +423,7 @@ export class HomePage implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
-  // ── Firestore: Consumo (guarda en colección aparte) ─────────
+  // ── Firestore: Consumo ──────────────────────────────────────
   async registrarConsumoTurno() {
     if (!this.formConsumo.idAlimento || !this.formConsumo.cantidad)
       return this.toast('Selecciona alimento y cantidad.', 'warning');
@@ -371,9 +433,7 @@ export class HomePage implements OnInit, OnDestroy {
     if (!item) return;
     const nueva = Math.max(0, Number(item.actual) - Number(this.formConsumo.cantidad));
     try {
-      // Actualizar stock
       await updateDoc(doc(this.firestore, 'inventario', item.id!), { actual: nueva });
-      // Guardar en historial de consumo
       const hoy = new Date();
       await addDoc(collection(this.firestore, 'consumo_turnos'), {
         fecha:      hoy.toISOString().split('T')[0],
@@ -418,7 +478,7 @@ export class HomePage implements OnInit, OnDestroy {
     } catch { this.toast('Error al guardar.', 'danger'); }
   }
 
-  // ── Cerrar Turno — solo guarda snapshot, sin Excel ──────────
+  // ── Cerrar Turno ────────────────────────────────────────────
   async cerrarTurno() {
     try {
       await addDoc(collection(this.firestore, 'historial_turnos'), {
@@ -430,7 +490,7 @@ export class HomePage implements OnInit, OnDestroy {
     } catch { this.toast('Error al cerrar el turno.', 'danger'); }
   }
 
-  // ── Exportar Excel — formato igual al template ───────────────
+  // ── Exportar Excel ──────────────────────────────────────────
   exportarExcel() {
     const categorias = [...new Set(this.inventario.map(i => i.categoria))];
     const filas: any[][] = [
@@ -453,7 +513,6 @@ export class HomePage implements OnInit, OnDestroy {
     });
 
     const ws = XLSX.utils.aoa_to_sheet(filas);
-    // Ancho de columnas similar al original
     ws['!cols'] = [{ wch: 16 }, { wch: 20 }, { wch: 18 }, { wch: 16 }, { wch: 16 }, { wch: 20 }, { wch: 14 }];
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Inventario');

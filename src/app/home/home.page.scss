@@ -1079,3 +1079,71 @@ apx-chart {
   margin-top: 12px;
   padding: 0 4px;
 }
+
+// =========================================
+//   MODALES FLOTANTES (Login y Edición)
+// =========================================
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 10, 18, 0.80);
+  backdrop-filter: blur(6px);
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: modalFadeIn 0.25s ease-out forwards;
+}
+
+.modal-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  position: relative;
+  transform: translateY(15px);
+  animation: modalSlideUp 0.25s ease-out forwards;
+
+  .modal-header h3 {
+    margin: 0 0 4px;
+    color: var(--text);
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .modal-header p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 11px;
+  }
+}
+
+.btn-tiny-edit {
+  background: rgba(109, 190, 46, 0.1);
+  border: 1px solid rgba(109, 190, 46, 0.2);
+  border-radius: 5px;
+  color: var(--text);
+  padding: 3px 6px;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: var(--verde-neon);
+    color: #070A12;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes modalSlideUp {
+  to { transform: translateY(0); }
+}
