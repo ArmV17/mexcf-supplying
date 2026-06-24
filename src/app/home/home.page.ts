@@ -87,8 +87,8 @@ export class HomePage implements OnInit, OnDestroy {
   mostrarModalLogin = false;
   loginUsuario      = '';
   loginPassword     = '';
-  private readonly USER_ADMIN = 'admin';
-  private readonly PASS_ADMIN = '12345';
+  private readonly USER_ADMIN = 'MEXCF';
+  private readonly PASS_ADMIN = 'CASUC';
 
   productoAEditar: Alimento | null = null;
   nuevaCategoriaVal = '';
